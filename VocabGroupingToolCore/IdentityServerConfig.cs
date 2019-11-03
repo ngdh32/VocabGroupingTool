@@ -7,13 +7,21 @@ using IdentityServer4.Test;
 using IdentityServer4;
 using System.Security.Claims;
 using IdentityModel;
+using Microsoft.Extensions.Configuration;
 
 
 namespace VocabGroupingToolCore
 {
-    public static class IdentityServerConfig
+    public class IdentityServerConfig
     {
-        public static IEnumerable<IdentityResource> GetIdentityResources()
+        private IConfiguration configuration { get; set; }
+
+        public IdentityServerConfig(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        public IEnumerable<IdentityResource> GetIdentityResources()
         {
 
             return new IdentityResource[]
@@ -23,7 +31,7 @@ namespace VocabGroupingToolCore
             };
         }
 
-        public static IEnumerable<ApiResource> GetApis()
+        public IEnumerable<ApiResource> GetApis()
         {
             return new List<ApiResource>
             {
@@ -47,13 +55,13 @@ namespace VocabGroupingToolCore
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients()
         {
             return new List<Client>
             {
                 new Client
                 {
-                    ClientId = "VGTClient",
+                    ClientId = configuration["vgt_client_id"],
 
                     // no interactive user, use the clientid/secret for authentication
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
@@ -61,7 +69,7 @@ namespace VocabGroupingToolCore
                     // secret for authentication
                     ClientSecrets =
                     {
-                        new Secret("secret".Sha256())
+                        new Secret(configuration["vgt_client_password"].Sha256())
                     },
 
                     // scopes that client has access to

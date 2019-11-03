@@ -144,11 +144,13 @@ namespace VocabGroupingToolCore
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
+                IdentityServerConfig identityServerConfig = new IdentityServerConfig(this.Configuration);
+
                 var configurationDbContext = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 //configurationDbContext.Database.Migrate();
                 if (!configurationDbContext.Clients.Any())
                 {
-                    foreach (var client in IdentityServerConfig.GetClients())
+                    foreach (var client in identityServerConfig.GetClients())
                     {
                         configurationDbContext.Clients.Add(client.ToEntity());
                     }
@@ -157,7 +159,7 @@ namespace VocabGroupingToolCore
 
                 if (!configurationDbContext.IdentityResources.Any())
                 {
-                    foreach (var resource in IdentityServerConfig.GetIdentityResources())
+                    foreach (var resource in identityServerConfig.GetIdentityResources())
                     {
                         configurationDbContext.IdentityResources.Add(resource.ToEntity());
                     }
@@ -166,7 +168,7 @@ namespace VocabGroupingToolCore
 
                 if (!configurationDbContext.ApiResources.Any())
                 {
-                    foreach (var resource in IdentityServerConfig.GetApis())
+                    foreach (var resource in identityServerConfig.GetApis())
                     {
                         configurationDbContext.ApiResources.Add(resource.ToEntity());
                     }
