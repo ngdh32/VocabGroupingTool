@@ -1,6 +1,8 @@
 # VocabGroupingTool
 
-Welcome to my little Vocab Grouping Tool(VGT) project. This application is created for non-native english speakers(my wife and I) who want to save the vocabs that they want to review later.   
+Welcome to my little Vocab Grouping Tool(VGT) project. This application is created for non-native english speakers(my wife and I) who want to save the vocabs that they want to review later.    
+
+Demo site: https://vgt.azurewebsites.net/ (Kindly wait a minute as I use free tier plan only)
 
 <p align="middle">
   <img src="https://ngdh32web.files.wordpress.com/2019/11/img_5942.png" width="30%" />
