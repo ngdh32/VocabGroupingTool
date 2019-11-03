@@ -2,7 +2,7 @@ import React from "react";
 import { Collapse, Button } from "reactstrap";
 
 const iconStyle = {
-    fontSize: "18px"
+
 };
 
 export default class Vocab extends React.Component {
@@ -24,6 +24,7 @@ export default class Vocab extends React.Component {
     }
 
     addClick(e) {
+        // avoid open safari in IOS
         e.preventDefault();
 
         let editObject = {
@@ -43,6 +44,7 @@ export default class Vocab extends React.Component {
     }
 
     editClick(e) {
+        // avoid open safari in IOS
         e.preventDefault();
 
         let editObject = {
@@ -60,18 +62,16 @@ export default class Vocab extends React.Component {
         editObject.meaning = this.props.meaning;
         editObject.example = this.props.example;
         editObject.parentId = this.props.parentId;
-        console.log("Hi")
-        console.log(this.props.parentId)
-        console.log(editObject.parentId)
 
         this.props.editToggle();
         this.props.editPanelOnChange(editObject);
 
     }
 
-    deleteClick(e,deleteId){
+    deleteClick(e, deleteId) {
+        // avoid open safari in IOS
         e.preventDefault();
-        
+
         this.props.handleRemoveClicked(deleteId);
     }
 
@@ -96,18 +96,18 @@ export default class Vocab extends React.Component {
                             </h5>
                         </div>
                         <div class="col-auto">
-                            <a href="#" onClick={(e) => {this.addClick(e)}}>
-                                <i class="material-icons" style={iconStyle}>
+                            <a href="#" onClick={(e) => { this.addClick(e) }}>
+                                <i class="material-icons vocabIcon">
                                     add_circle
                 </i>
                             </a>
-                            <a href="#" onClick={(e) => {this.editClick(e)}}>
-                                <i class="material-icons" style={iconStyle}>
+                            <a href="#" onClick={(e) => { this.editClick(e) }}>
+                                <i class="material-icons vocabIcon">
                                     edit
                 </i>
                             </a>
-                            <a href="#" onClick={ (e) => this.deleteClick(e,this.props.id)}>
-                                <i class="material-icons" style={iconStyle}>
+                            <a href="#" onClick={(e) => this.deleteClick(e, this.props.id)}>
+                                <i class="material-icons vocabIcon">
                                     cancel
                 </i>
                             </a>
@@ -118,7 +118,7 @@ export default class Vocab extends React.Component {
                             <p class="card-text">Example: </p>
                             <p class="card-text">{this.props.example}</p>
                         </div>
-                        <div class="col col-auto" style={{ alignSelf: "flex-end" }}>
+                        <div class="col col-auto vocabDivMore">
                             {this.props.subVocabs.length > 0 && (
                                 <Button color="primary" onClick={this.toggle}>
                                     More

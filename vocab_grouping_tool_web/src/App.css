@@ -42,3 +42,15 @@
 .container {
   padding-top: 70px;
 }
+
+.loginButtom {
+  margin: 2px;
+}
+
+.vocabIcon{
+  font-size: 18px !important;
+}
+
+.vocabDivMore{
+  align-self: "flex-end"
+}

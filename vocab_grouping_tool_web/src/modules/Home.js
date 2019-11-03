@@ -12,6 +12,7 @@ import {
 import VocabList from "./VocabList.js";
 import Edit from "./Edit.js";
 import config from '../Config.js';
+import ApiHelper from "../ApiHelper.js";
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -30,7 +31,7 @@ export default class Home extends React.Component {
             navIsOpen: false,
             editIsOpen: false,
             isLoading: false,
-            isVocabLoading:false,
+            isVocabLoading: false,
             editPanelObject: {
                 id: null,
                 parentId: null,
@@ -43,23 +44,23 @@ export default class Home extends React.Component {
         };
     }
 
-    toggleIsLoading(){
+    // show/hide action loading spinner
+    toggleIsLoading() {
         this.setState(prev => {
-          return {
-            isLoading: !prev.isLoading
-          }
+            return {
+                isLoading: !prev.isLoading
+            }
         })
-        // this.state.isLoading = !this.state.isLoading;
-      }
+    }
 
-      toggleisVocabLoading(){
+    // show/hide vocab list loading spinner
+    toggleisVocabLoading() {
         this.setState(prev => {
-          return {
-            isVocabLoading: !prev.isVocabLoading
-          }
+            return {
+                isVocabLoading: !prev.isVocabLoading
+            }
         })
-        // this.state.isLoading = !this.state.isLoading;
-      }
+    }
 
     getVocabList() {
         var bearer = 'Bearer ' + this.props.vgt_auth;
@@ -73,40 +74,37 @@ export default class Home extends React.Component {
 
         const _this = this;
 
+        // show loading spinner
         _this.toggleisVocabLoading();
 
-        fetch(config.vgt_core_url + "/api/vocabs/", requestConfigObject)
-            .then(function (response) {
-                _this.toggleisVocabLoading();
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status == '401') {
-                    _this.props.handleRemoveAuthCookie();
-                }
-            })
-            .then(myJson => {
-                this.setState({ vocabs: myJson.data });
-            }).catch(function (error) {
-                _this.toggleisVocabLoading();
-                console.log(error);
-            });
+        // retrieve vocab list
+        ApiHelper.callApi("/api/vocabs/", requestConfigObject, _this.props.handleRemoveAuthCookie
+        , (res) => {
+            _this.setState({ vocabs: res.data });
+            _this.toggleisVocabLoading();
+        }, (error) => {
+            _this.toggleisVocabLoading();
+        })
     }
 
     componentDidMount() {
         this.getVocabList();
     }
 
+    // handle the chnage of input in edit panel
     editPanelOnChange(object) {
         this.setState({
             editPanelObject: object
         });
     }
 
+    // show/hide edit panel
     editToggle() {
         this.setState({
             editIsOpen: !this.state.editIsOpen
         });
 
+        // initialize the edit panel input
         this.setState({
             editPanelObject: {
                 id: null,
@@ -119,13 +117,14 @@ export default class Home extends React.Component {
         })
     }
 
+    // show/hide navigator
     navToggle() {
         this.setState({
             navIsOpen: !this.state.navIsOpen
         });
     }
 
-    handleRemoveClicked(deleteId){
+    handleRemoveClicked(deleteId) {
         var bearer = 'Bearer ' + this.props.vgt_auth;
 
         var requestConfigObject = {
@@ -136,32 +135,18 @@ export default class Home extends React.Component {
         }
 
         const _this = this;
-        const url = config.vgt_core_url + "/api/vocabs/" + deleteId;
+        const url = "/api/vocabs/" + deleteId;
 
-        console.log(url)
-
-        // this.toggleIsLoading();
-
-        fetch(url, requestConfigObject)
-            .then(function (response) {
-                // _this.toggleIsLoading();
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status == '401') {
-                    _this.props.handleRemoveAuthCookie();
-                }
-            })
-            .then(myJson => {
-                console.log(myJson)
-                if (myJson.code == 200) {
-                    this.getVocabList();
-                } else {
-                    console.log(myJson);
-                }
-            }).catch(function (error) {
-                // _this.toggleIsLoading()
-                console.log(error);
-            });
+        ApiHelper.callApi(url, requestConfigObject, _this.props.handleRemoveAuthCookie
+        , (res) => {
+            if (res.code == 200) {
+                _this.getVocabList();
+            } else {
+                console.log(res);
+            }
+        }, (error) => {
+            // to implement...
+        })
     }
 
     handleEditSubmittedClicked() {
@@ -177,36 +162,24 @@ export default class Home extends React.Component {
             body: JSON.stringify(this.state.editPanelObject)
         }
 
-        console.log(this.state.editPanelObject)
-
         const _this = this;
-        const url = config.vgt_core_url + "/api/vocabs/" + (_this.state.editPanelObject.id == null || _this.state.editPanelObject.id == undefined ? "" : _this.state.editPanelObject.id);
+        // if id is not undefined, it is a create action. If id is not empty, it is an edit action
+        const url = "/api/vocabs/" + (_this.state.editPanelObject.id == null || _this.state.editPanelObject.id == undefined ? "" : _this.state.editPanelObject.id);
 
-        console.log(url)
-
+        // show loading spinner
         this.toggleIsLoading()
 
-        fetch(url, requestConfigObject)
-            .then(function (response) {
-                _this.toggleIsLoading()
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status == '401') {
-                    _this.props.handleRemoveAuthCookie();
-                }
-            })
-            .then(myJson => {
-                console.log(myJson)
-                if (myJson.code == 200) {
-                    _this.editToggle();
-                    this.getVocabList();
-                } else {
-                    console.log(myJson);
-                }
-            }).catch(function (error) {
-                _this.toggleIsLoading()
-                console.log(error);
-            });
+        // retrieve vocab list
+        ApiHelper.callApi(url, requestConfigObject, _this.props.handleRemoveAuthCookie
+        , (res) => {
+            if (res.code == 200) {
+                _this.editToggle();
+                _this.getVocabList();
+                _this.toggleIsLoading();
+            } 
+        }, (error) => {
+            _this.toggleIsLoading();
+        })
     }
 
     render() {
@@ -258,12 +231,12 @@ export default class Home extends React.Component {
                     </Navbar>
                 </div>
                 <div class="container">
-                    { this.state.isVocabLoading ?
+                    {this.state.isVocabLoading ?
                         (
                             <div class='row justify-content-center'>
                                 <div class="spinner-border text-primary" role="status">
-                                </div> 
-                            </div> 
+                                </div>
+                            </div>
                         ) : (
                             <div></div>
                         )

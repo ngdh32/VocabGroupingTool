@@ -34,39 +34,25 @@ function PrivateRoute({ component: Component, ...rest }) {
   );
 }
 
-// const AuthButton = withRouter(
-//   ({ history }) =>
-//     fakeAuth.isAuthenticated ? (
-//       <p>
-//         Welcome!{" "}
-//         <button
-//           onClick={() => {
-//             fakeAuth.signout(() => history.push("/"));
-//           }}
-//         >
-//           Sign out
-//         </button>
-//       </p>
-//     ) : (
-//       <p>You are not logged in.</p>
-//     )
-// );
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     const cookies = new Cookies();
     this.state = {
-      vgt_auth: cookies.get('vgt_auth')
+      vgt_auth: cookies.get(this.vgt_auth)
     }
 
     this.handleRemoveAuthCookie = this.handleRemoveAuthCookie.bind(this);
     this.handleSetAuthCookie = this.handleSetAuthCookie.bind(this);
   }
 
+  // key of authentication cookie
+  vgt_auth = "vgt_auth"
+
   handleRemoveAuthCookie(){
     const cookies = new Cookies();
-    cookies.remove('vgt_auth');
+    cookies.remove(this.vgt_auth);
     this.setState({
       vgt_auth: ""
     })
@@ -74,7 +60,7 @@ class App extends React.Component {
 
   handleSetAuthCookie(vgt_auth){
     const cookies = new Cookies();
-    cookies.set('vgt_auth',vgt_auth,{ maxAge: 60 * 60 * 24 * 365});
+    cookies.set(this.vgt_auth,vgt_auth,{ maxAge: 60 * 60 * 24 * 365});
     this.setState({
       vgt_auth: vgt_auth
     })
