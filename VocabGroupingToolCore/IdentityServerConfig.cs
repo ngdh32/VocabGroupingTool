@@ -11,7 +11,7 @@ using IdentityModel;
 
 namespace VocabGroupingToolCore
 {
-    public static class Config
+    public static class IdentityServerConfig
     {
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {

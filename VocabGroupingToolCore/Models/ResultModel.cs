@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VocabGroupingToolCore.Models
 {
-    public class Result
+    public class ResultModel
     {
         public int Code { get; set; }
 

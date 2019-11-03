@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VocabGroupingToolCore.Models.AuthenModal;
 using VocabGroupingToolCore.Models;
-using VocabGroupingToolCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http;
 using IdentityModel;
@@ -38,7 +37,7 @@ namespace VocabGroupingToolCore.Controllers
         }
 
         [HttpPost("[action]")]
-        public ActionResult<Result> Login([FromBody] LoginView loginView)
+        public ActionResult<ResultModel> Login([FromBody] LoginView loginView)
         {
             try
             {
@@ -48,14 +47,12 @@ namespace VocabGroupingToolCore.Controllers
                 var disco = client.GetDiscoveryDocumentAsync(configuration["vgt_auth_url"]).Result;
                 if (disco.IsError)
                 {
-                    Console.WriteLine(disco.Error);
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 1999,
                         Message = "Cannot discover endpoint"
                     };
                 }
-                Console.WriteLine("Endpoint found!");
 
                 // request token
                 var tokenResponse = client.RequestPasswordTokenAsync(new PasswordTokenRequest
@@ -72,7 +69,7 @@ namespace VocabGroupingToolCore.Controllers
                 if (tokenResponse.IsError)
                 {
                     Console.WriteLine(tokenResponse.Error);
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 1999,
                         Message = "Error occurs when requesting access token"
@@ -80,7 +77,7 @@ namespace VocabGroupingToolCore.Controllers
                 }
                 else
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 200,
                         Message = "",
@@ -91,8 +88,7 @@ namespace VocabGroupingToolCore.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 1999,
                     Message = "Error occurs when requesting access token"
@@ -102,15 +98,15 @@ namespace VocabGroupingToolCore.Controllers
         }
 
         [HttpPost("[action]")]
-        public ActionResult<Result> Register([FromBody] LoginView loginView)
+        public ActionResult<ResultModel> Register([FromBody] LoginView loginView)
         {
             try
             {
-                var alice = userManager.FindByNameAsync(loginView.name).Result;
+                var user = userManager.FindByNameAsync(loginView.name).Result;
 
-                if (alice != null)
+                if (user != null)
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 1999,
                         Message = "User has been Created",
@@ -119,25 +115,25 @@ namespace VocabGroupingToolCore.Controllers
                 }
 
 
-                alice = new IdentityUser
+                user = new IdentityUser
                 {
                     //Id = Guid.NewGuid().ToString(),
                     UserName = loginView.name,
                     Email = loginView.name,
-                    SecurityStamp = Guid.NewGuid().ToString()
+                    SecurityStamp = Guid.NewGuid().ToString() // need to add this !!!
                 };
-                var result = userManager.CreateAsync(alice, loginView.password).Result;
+                var result = userManager.CreateAsync(user, loginView.password).Result;
 
-                alice = userManager.FindByNameAsync(loginView.name).Result;
+                user = userManager.FindByNameAsync(loginView.name).Result;
 
-                result = userManager.AddClaimsAsync(alice, new Claim[]{
+                result = userManager.AddClaimsAsync(user, new Claim[]{
                                 new Claim(JwtClaimTypes.Name, loginView.name ),
                                 new Claim(JwtClaimTypes.Email, loginView.name)
                             }).Result;
 
 
                 var saveChangesResult = dbContext.SaveChanges();
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 200,
                     Message = "",
@@ -146,8 +142,7 @@ namespace VocabGroupingToolCore.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 1999,
                     Message = "Error occurs when requesting access token"

@@ -28,9 +28,9 @@ namespace VocabGroupingToolCore.Controllers
         // GET api/values
         [Authorize]
         [HttpGet]
-        public ActionResult<Result> Get()
+        public ActionResult<ResultModel> Get()
         {
-            Result result = new Result();
+            ResultModel result = new ResultModel();
 
             var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
             if (nameIdentifier != null)
@@ -62,13 +62,13 @@ namespace VocabGroupingToolCore.Controllers
         // POST api/values
         [HttpPost]
         [Authorize]
-        public ActionResult<Result> Post([FromBody] Vocab vocab)
+        public ActionResult<ResultModel> Post([FromBody] Vocab vocab)
         {
             // Thread.Sleep(2000);
             var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
             if (nameIdentifier == null)
             {
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 200
                     ,
@@ -80,7 +80,7 @@ namespace VocabGroupingToolCore.Controllers
             int result = dbContext.SaveChanges();
             if (result == 1)
             {
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 200
                     ,
@@ -89,7 +89,7 @@ namespace VocabGroupingToolCore.Controllers
             }
             else
             {
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 1999
                     ,
@@ -102,13 +102,13 @@ namespace VocabGroupingToolCore.Controllers
         // PUT api/values/5
         [HttpPost("{id}")]
         [Authorize]
-        public ActionResult<Result> Put([FromBody] Vocab vocab)
+        public ActionResult<ResultModel> Put([FromBody] Vocab vocab)
         {
-            
+
             Vocab foundVocab = dbContext.Vocabs.Where(x => x.Id == vocab.Id).FirstOrDefault();
             if (foundVocab == null)
             {
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 1999
                         ,
@@ -124,7 +124,7 @@ namespace VocabGroupingToolCore.Controllers
                 int result = dbContext.SaveChanges();
                 if (result == 1)
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 200
                         ,
@@ -133,7 +133,7 @@ namespace VocabGroupingToolCore.Controllers
                 }
                 else
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 1999
                         ,
@@ -146,12 +146,12 @@ namespace VocabGroupingToolCore.Controllers
         // DELETE api/values/5
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<Result> Delete(int id)
+        public ActionResult<ResultModel> Delete(int id)
         {
             Vocab foundVocab = dbContext.Vocabs.Where(x => x.Id == id).FirstOrDefault();
             if (foundVocab == null)
             {
-                return new Result()
+                return new ResultModel()
                 {
                     Code = 1999
                         ,
@@ -164,7 +164,7 @@ namespace VocabGroupingToolCore.Controllers
                 int result = dbContext.SaveChanges();
                 if (result == 1)
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 200
                         ,
@@ -173,7 +173,7 @@ namespace VocabGroupingToolCore.Controllers
                 }
                 else
                 {
-                    return new Result()
+                    return new ResultModel()
                     {
                         Code = 1999
                         ,

@@ -24,6 +24,7 @@ namespace VocabGroupingToolCore.Models.VocabModel
 
         public List<VocabViewObject> SubVocabs { get; set; }
 
+        // create a vocab list for Home.js
         public static List<VocabViewObject> CreateVocabViewObjectList(List<Vocab> vocabs, int? parentId)
         {
             List<VocabViewObject> result = new List<VocabViewObject>(); 
