@@ -41,3 +41,17 @@ dotnet run
 ```
 npm start
 ```
+
+## Build with
+Front End:
+- reactjs 
+- bootstrap
+
+Back End:
+- .Net core 2.2 Web API
+- Identity Server 4
+- Entity Framework core
+- ASP.NET identity
+
+## Author
+Tim Ng - Personal blog at http://timmydinheing.com/
