@@ -189,7 +189,7 @@ namespace VocabGroupingToolCore
                 rootpath = Environment.GetEnvironmentVariable("HOME") + @"\site\wwwroot";
             }
         
-            cert = new X509Certificate2(Path.Combine(rootpath, "vgt.pfx"), Configuration["vgt_cert_pw"]);
+            cert = new X509Certificate2(Path.Combine(rootpath, "vgt.pfx"), Configuration["vgt_cert_pw"],X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
                 
 
             // Fallback to local file for development
