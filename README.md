@@ -10,6 +10,8 @@ Demo site: https://vgt.azurewebsites.net/ (Kindly wait a minute as I use free ti
   <img src="https://ngdh32web.files.wordpress.com/2019/11/img_5940.png" width="30%" />
 </p>
 
+If you are visiting VGT demo site on IOS, once you log in you can save it to the desktop so that you can use it with a native -app like outlook.
+
 ## Prerequisites
 
 The following need to be installed before launching the application:
@@ -21,7 +23,7 @@ The following need to be installed before launching the application:
 
 Follow the below steps to install the application:
 1. Clone this repository
-2. Go to VocabGroupingTool/VocabGroupingToolCore/appsettings.json and change the connection string to yours and the value of data_migration property to "Y"
+2. Go to VocabGroupingTool/VocabGroupingToolCore/appsettings.json and change the connection string as well as vgt_cert_path (you can use openssl to create one) to yours and the value of data_migration property to "Y".
 3. Go to VocabGroupingTool/VocabGroupingToolCore/Startup.cs and change the entity framework provider to yours (e.g. Oracle, MSSQL)
 4. Go to VocabGroupingTool/VocabGroupingToolCore/ and execute the following commands to create the database schema:
 ```
