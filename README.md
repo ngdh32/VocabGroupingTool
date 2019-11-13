@@ -7,7 +7,7 @@ Demo site: https://vgt.azurewebsites.net/ (Kindly wait a minute as I use free ti
 <p align="middle">
   <img src="https://ngdh32web.files.wordpress.com/2019/11/img_5942.png" width="30%" />
   <img src="https://ngdh32web.files.wordpress.com/2019/11/img_5941.png" width="30%" /> 
-  <img src="https://ngdh32web.files.wordpress.com/2019/11/img_5940.png" width="30%" />
+  <img src="https://ngdh32web.files.wordpress.com/2019/11/photo6224102349090171111.jpg" width="30%" />
 </p>
 
 If you are visiting VGT demo site on IOS, once you log in you can save it to the desktop so that you can use it with a native -app like outlook.
