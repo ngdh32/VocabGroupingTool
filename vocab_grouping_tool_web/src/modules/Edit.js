@@ -40,10 +40,10 @@ export default class Edit extends React.Component {
           className={this.props.className}
         >
           {/*<ModalHeader toggle={this.props.toggle}></ModalHeader> */}
-          <ModalBody>
+          <ModalBody className={this.props.theme + " editBacgkround"}>
             <Form>
               <FormGroup>
-                <Label for="txtWord">Word</Label>
+                <Label for="txtWord" className={this.props.theme + " card-text"}>Word</Label>
                 <Input
                   onChange={this.handleChange}
                   type="text"
@@ -51,10 +51,11 @@ export default class Edit extends React.Component {
                   id="txtWord"
                   placeholder="Word"
                   value={this.props.editPanelObject.word}
+                  className={this.props.theme + " input"}
                 />
               </FormGroup>
               <FormGroup>
-                <Label for="txtMeaning">Meaning</Label>
+                <Label for="txtMeaning" className={this.props.theme + " card-text"}>Meaning</Label>
                 <Input
                   onChange={this.handleChange}
                   type="text"
@@ -62,10 +63,11 @@ export default class Edit extends React.Component {
                   id="txtMeaning"
                   placeholder="Meaning"
                   value={this.props.editPanelObject.meaning}
+                  className={this.props.theme + " input"}
                 />
               </FormGroup>
               <FormGroup>
-                <Label for="txtExample">Example</Label>
+                <Label for="txtExample" className={this.props.theme + " card-text"}>Example</Label>
                 <Input
                   onChange={this.handleChange}
                   type="textarea"
@@ -73,22 +75,23 @@ export default class Edit extends React.Component {
                   id="txtExample"
                   placeholder="Example"
                   value={this.props.editPanelObject.example}
+                  className={this.props.theme + " input"}
                 />
               </FormGroup>
             </Form>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className={this.props.theme + " editBacgkroundFooter"}>
             { 
                 this.props.isLoading ?
                 (
-                <div class="spinner-border text-primary" role="status">
+                <div class={this.props.theme + "spinner-border"} role="status">
                 </div> 
                 ) : (
                   <div></div>
                 )
 
             }
-            <Button color="primary" onClick={this.handleSubmitClicked} disabled={this.props.isLoading}>
+            <Button className={this.props.theme + " button"} onClick={this.handleSubmitClicked} disabled={this.props.isLoading}>
               Confirm
             </Button>{" "}
             <Button color="secondary" onClick={this.props.toggle} disabled={this.props.isLoading}>

@@ -31,7 +31,7 @@ export default class VocabList extends React.Component {
       <ul class="list-group list-group-flush">
         {vocabss.map(x => {
           return (
-            <li class="list-group-item">
+            <li class={this.props.theme + " list-group-item"}>
               <Vocab
                 id={x.id}
                 parentId={x.parentId}
@@ -42,6 +42,7 @@ export default class VocabList extends React.Component {
                 editToggle={this.props.editToggle}
                 editPanelOnChange={this.props.editPanelOnChange}
                 handleRemoveClicked={this.props.handleRemoveClicked}
+                theme={this.props.theme}
               />
             </li>
           );

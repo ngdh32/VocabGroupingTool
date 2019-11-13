@@ -1,0 +1,115 @@
+.classicpink.navbarText{
+    color:rgb(255,45,85);
+}
+
+.classicpink.appBackground{
+    background-color:white ;
+}
+
+.classicpink.container{
+    background-color:white ;
+}
+
+.classicpink.appNavbar{
+    background-color: #f7f7f7;
+    border-bottom-color: rgb(255,45,85) !important;
+}
+
+.classicpink.navbar-light.navbar-toggler{
+    border-color: rgb(255,45,85);
+}
+
+.classicpink.navbar-light.navbar-toggler span{
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(255,45,85)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E")
+}
+
+.classicpink.card-title{
+    color: #000000;
+}
+
+.classicpink.card-text{
+    color: #222222;
+}
+
+.classicpink.vocabIcon{
+    color:rgb(255,45,85);
+}
+
+.classicpink.list-group-item{
+    background-color : white;
+    border-color:rgba(229,229,234);
+}
+
+.classicpink.card{
+    border-color:#f7f7f7;
+    background-color : white;
+}
+
+.classicpink.card.mainFrame{
+    border-color:rgb(255,45,85);
+    background-color : white;
+}
+
+.classicpink.button{
+    background-color :rgb(255,45,85);
+    border-color: rgb(255,55,85);
+}
+
+.classicpink.button:hover{
+    background-color :rgb(255,55,85);
+    border-color: rgb(255,45,85);
+}
+
+.classicpink.button:active{
+    background-color :rgb(255,45,85) !important;
+    border-color: rgb(255,55,85) !important;
+}
+
+.classicpink.spinner-border{
+    color:rgb(255,45,85) !important;
+}
+
+.classicpink.editBacgkround{
+    background-color:white ;
+}
+
+
+.classicpink.input{
+    background-color:white ;
+    color: #000000;
+}
+
+.classicpink.input:focus{
+    background-color:white ;
+    color: #000000;
+    border-color: #000000;
+}
+
+.classicpink.editBacgkroundFooter{
+    background-color:white ;
+    border-color: white ;
+}
+
+.classicpink.dropdown .dropdown-toggle,
+.classicpink.dropdown .dropdown-toggle:active,
+.classicpink.dropdown .dropdown-toggle:focus,
+.classicpink.dropdown .dropdown-toggle:hover{
+    background-color :transparent !important;
+    border: none;
+    /* padding: 0%; */
+    /* border-color: rgb(255,45,85) !important; */
+    color:rgb(255,45,85) !important;
+}
+.classicpink.navbarDropdownListItem,
+.classicpink.navbarDropdownListItem:active,
+.classicpink.navbarDropdownListItem:focus,
+.classicpink.navbarDropdownListItem:hover{
+    background-color :transparent !important;
+    border-color: rgb(255,45,85) !important;
+    color:rgb(255,45,85) !important;
+}
+
+.classicpink.dropdown-menu.show{
+    background-color :white !important;
+    border-color: rgb(255,45,85) !important;
+}

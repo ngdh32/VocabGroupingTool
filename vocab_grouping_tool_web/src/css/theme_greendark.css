@@ -1,0 +1,114 @@
+.greendark.navbarText{
+    color:rgb(0, 255, 65);
+}
+
+.greendark.appBackground{
+    background-color:rgb(28,28,30) ;
+}
+
+.greendark.container{
+    background-color:rgb(28,28,30) ;
+}
+
+.greendark.appNavbar{
+    background-color: rgb(28,28,30);
+    border-bottom-color: rgb(0, 255, 65) !important;
+}
+
+.greendark.navbar-light.navbar-toggler{
+    border-color: rgb(0, 255, 65);
+}
+
+.greendark.navbar-light.navbar-toggler span{
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(0, 255, 65)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E")
+}
+
+.greendark.card-title{
+    color: rgb(229,229,234);
+}
+
+.greendark.card-text{
+    color: rgb(229,229,234);
+}
+
+.greendark.vocabIcon{
+    color:rgb(0, 255, 65);
+}
+
+.greendark.list-group-item{
+    background-color : rgb(28,28,30);
+    border-color:rgb(174,174,178);
+}
+
+.greendark.card{
+    border-color:rgb(229,229,234);
+    background-color : rgb(28,28,30);
+}
+
+.greendark.card.mainFrame{
+    border-color:rgb(0, 255, 65);
+    background-color : rgb(28,28,30);
+}
+
+.greendark.button{
+    background-color :rgb(0, 255, 65);
+    border-color: rgb(0, 143, 17);
+}
+
+.greendark.button:hover{
+    background-color :rgb(0, 255, 65);
+    border-color: rgb(0, 143, 17);
+}
+
+.greendark.button:active{
+    background-color :rgb(0, 255, 65) !important;
+    border-color: rgb(0, 143, 17) !important;
+}
+
+.greendark.spinner-border{
+    color:rgb(0, 255, 65) !important;
+}
+
+.greendark.editBacgkround{
+    background-color:rgb(28,28,30) ;
+}
+
+.greendark.input{
+    background-color:rgb(58,58,60) ;
+    color: rgb(229,229,234);
+}
+
+.greendark.input:focus{
+    background-color:rgb(58,58,60) ;
+    color: rgb(229,229,234);
+    border-color: rgb(229,229,234);
+}
+
+.greendark.editBacgkroundFooter{
+    background-color:rgb(28,28,30) ;
+    border-color: rgb(28,28,30) ;
+}
+
+.greendark.dropdown .dropdown-toggle,
+.greendark.dropdown .dropdown-toggle:active,
+.greendark.dropdown .dropdown-toggle:focus,
+.greendark.dropdown .dropdown-toggle:hover{
+    background-color :transparent !important;
+    border: none;
+    /* padding: 0%; */
+    color:rgb(0, 255, 65) !important;
+}
+
+.greendark.navbarDropdownListItem,
+.greendark.navbarDropdownListItem:active,
+.greendark.navbarDropdownListItem:focus,
+.greendark.navbarDropdownListItem:hover{
+    background-color :transparent !important;
+    border-color: rgb(0, 255, 65) !important;
+    color:rgb(0, 255, 65) !important;
+}
+
+.greendark.dropdown-menu.show{
+    background-color :rgb(28,28,30) !important;
+    border-color: rgb(0, 255, 65) !important;
+}

@@ -1,0 +1,113 @@
+.reddark.navbarText{
+    color:rgb(255,45,85);
+}
+
+.reddark.appBackground{
+    background-color:rgb(28,28,30) ;
+}
+
+.reddark.container{
+    background-color:rgb(28,28,30) ;
+}
+
+.reddark.appNavbar{
+    background-color: rgb(28,28,30);
+    border-bottom-color: rgb(255,45,85) !important;
+}
+
+.reddark.navbar-light.navbar-toggler{
+    border-color: rgb(255,45,85);
+}
+
+.reddark.navbar-light.navbar-toggler span{
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(255,45,85)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E")
+}
+
+.reddark.card-title{
+    color: rgb(229,229,234);
+}
+
+.reddark.card-text{
+    color: rgb(229,229,234);
+}
+
+.reddark.vocabIcon{
+    color:rgb(255,45,85);
+}
+
+.reddark.list-group-item{
+    background-color : rgb(28,28,30);
+    border-color:rgb(174,174,178);
+}
+
+.reddark.card{
+    border-color:rgb(229,229,234);
+    background-color : rgb(28,28,30);
+}
+
+.reddark.card.mainFrame{
+    border-color:rgb(255,45,85);
+    background-color : rgb(28,28,30);
+}
+
+.reddark.button{
+    background-color :rgb(255,45,85);
+    border-color: rgb(255,55,95);
+}
+
+.reddark.button:hover{
+    background-color :rgb(255,55,95);
+    border-color: rgb(255,55,95);
+}
+
+.reddark.button:active{
+    background-color :rgb(255,45,85) !important;
+    border-color: rgb(255,55,95) !important;
+}
+
+.reddark.spinner-border{
+    color:rgb(255,45,85) !important;
+}
+
+.reddark.editBacgkround{
+    background-color:rgb(28,28,30) ;
+}
+
+.reddark.input{
+    background-color:rgb(58,58,60) ;
+    color: rgb(229,229,234);
+}
+
+.reddark.input:focus{
+    background-color:rgb(58,58,60) ;
+    color: rgb(229,229,234);
+    border-color: rgb(229,229,234);
+}
+
+.reddark.editBacgkroundFooter{
+    background-color:rgb(28,28,30) ;
+    border-color: rgb(28,28,30) ;
+}
+
+.reddark.dropdown .dropdown-toggle,
+.reddark.dropdown .dropdown-toggle:active,
+.reddark.dropdown .dropdown-toggle:focus,
+.reddark.dropdown .dropdown-toggle:hover{
+    background-color :rgb(28,28,30) !important;
+    border: none;
+    /* padding: 0%; */
+    color:rgb(255,45,85) !important;
+}
+.reddark.navbarDropdownListItem,
+.reddark.navbarDropdownListItem:active,
+.reddark.navbarDropdownListItem:focus,
+.reddark.navbarDropdownListItem:hover{
+    background-color :rgb(28,28,30) !important;
+    border-color: rgb(255,45,85) !important;
+    color:rgb(255,45,85) !important;
+}
+
+.reddark.dropdown-menu.show{
+    background-color :rgb(28,28,30) !important;
+    border-color: rgb(255,45,85) !important;
+}

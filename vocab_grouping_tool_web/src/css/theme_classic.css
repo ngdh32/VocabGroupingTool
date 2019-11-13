@@ -1,0 +1,117 @@
+.classic.navbarText{
+    color:#007bff;
+}
+
+.classic.appBackground{
+    background-color:white ;
+}
+
+.classic.container{
+    background-color:white ;
+}
+
+.classic.appNavbar{
+    background-color: #f7f7f7;
+    border-bottom-color: #007bff !important;
+}
+
+.classic.navbar-light.navbar-toggler{
+    border-color: #007bff;
+}
+
+.classic.navbar-light.navbar-toggler span{
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(2, 117, 216)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E")
+}
+
+.classic.card-title{
+    color: #000000;
+}
+
+.classic.card-text{
+    color: #222222;
+}
+
+.classic.vocabIcon{
+    color:#007bff;
+}
+
+.classic.list-group-item{
+    background-color : white;
+    border-color:rgba(229,229,234);
+}
+
+.classic.card{
+    border-color:#f7f7f7;
+    background-color : white;
+}
+
+.classic.card.mainFrame{
+    border-color:#007bff;
+    background-color : white;
+}
+
+.classic.button{
+    background-color :#007bff;
+    border-color: #007bff;
+}
+
+.classic.button:hover{
+    background-color :#0069d9;
+    border-color: #0062cc;
+}
+
+.classic.button:active{
+    background-color :#0275d8 !important;
+    border-color: #007bff !important;
+}
+
+.classic.spinner-border{
+    color:#0275d8 !important;
+}
+
+.classic.editBacgkround{
+    background-color:white ;
+}
+
+.classic.input{
+    background-color:white ;
+    color: #000000;
+}
+
+.classic.input:focus{
+    background-color:white ;
+    color: #000000;
+    border-color: #000000;
+}
+
+.classic.editBacgkroundFooter{
+    background-color:white ;
+    border-color: white ;
+}
+
+.classic.dropdown .dropdown-toggle,
+.classic.dropdown .dropdown-toggle:active,
+.classic.dropdown .dropdown-toggle:focus,
+.classic.dropdown .dropdown-toggle:hover{
+    background-color :transparent !important;
+    border: none;
+    /* padding: 0%; */
+    /* border-color: #007bff !important; */
+    color:#007bff !important;
+}
+
+.classic.navbarDropdownListItem,
+.classic.navbarDropdownListItem:active,
+.classic.navbarDropdownListItem:focus,
+.classic.navbarDropdownListItem:hover{
+    background-color :transparent !important;
+    border-color: #007bff !important;
+    color:#007bff !important;
+}
+
+
+.classic.dropdown-menu.show{
+    background-color :white !important;
+    border-color: #007bff !important;
+}
+

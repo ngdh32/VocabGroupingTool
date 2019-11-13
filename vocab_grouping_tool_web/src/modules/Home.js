@@ -13,12 +13,14 @@ import VocabList from "./VocabList.js";
 import Edit from "./Edit.js";
 import config from '../Config.js';
 import ApiHelper from "../ApiHelper.js";
+import Cookies from 'universal-cookie';
+import VGTNavbar from "./VGTNavbar"
 
 export default class Home extends React.Component {
     constructor(props) {
         super(props);
 
-
+        this.cookie = new Cookies();
         this.navToggle = this.navToggle.bind(this);
         this.editToggle = this.editToggle.bind(this);
         this.editPanelOnChange = this.editPanelOnChange.bind(this);
@@ -32,6 +34,7 @@ export default class Home extends React.Component {
             editIsOpen: false,
             isLoading: false,
             isVocabLoading: false,
+            theme: this.cookie.get("vgt_theme") == undefined ? config.default_theme : this.cookie.get("vgt_theme"),
             editPanelObject: {
                 id: null,
                 parentId: null,
@@ -40,7 +43,9 @@ export default class Home extends React.Component {
                 example: "",
                 userId: ""
             },
-            vocabs: []
+            vocabs: [],
+            displayVocabs: [],
+            searchKey: ""
         };
     }
 
@@ -80,7 +85,7 @@ export default class Home extends React.Component {
         // retrieve vocab list
         ApiHelper.callApi("/api/vocabs/", requestConfigObject, _this.props.handleRemoveAuthCookie
         , (res) => {
-            _this.setState({ vocabs: res.data });
+            _this.setState({ vocabs: res.data, displayVocabs: res.data,searchKey: "" });
             _this.toggleisVocabLoading();
         }, (error) => {
             _this.toggleisVocabLoading();
@@ -182,59 +187,61 @@ export default class Home extends React.Component {
         })
     }
 
+    handleSetTheme = (themeId) => {
+        this.setState({
+            theme: themeId
+        });
+        this.cookie.set(this.props.vgt_theme, themeId,{ maxAge: 60 * 60 * 24 * 365});
+    }
+
+
+    handleSearchInputChange = (event) => {
+        let searchKey = event.target.value;
+        this.setState({searchKey: searchKey});
+        if (searchKey == ""){
+            this.setState({displayVocabs: this.state.vocabs});
+        }else{
+            let toSearchVocabs = JSON.parse(JSON.stringify(this.state.vocabs));
+            const searchedVocabs = this.searchMatchVocabs(searchKey, toSearchVocabs);
+            this.setState({displayVocabs: searchedVocabs });
+            
+        }
+    }
+
+    searchMatchVocabs = function(serachKey, vocabs){
+        let matchVocabs = [];
+        for(let i=0;i<vocabs.length;i++){
+            if (vocabs[i].subVocabs != undefined && vocabs[i].subVocabs.length > 0){
+                Array.prototype.push.apply(matchVocabs,this.searchMatchVocabs(serachKey, vocabs[i].subVocabs));
+            }
+
+            if (vocabs[i].word.toUpperCase().startsWith(serachKey.toUpperCase())){
+                vocabs[i].subVocabs = [];
+                matchVocabs.push(vocabs[i]);
+            }
+            
+        }
+        return matchVocabs;
+    }
+
     render() {
         return (
-            <div>
-                <div>
-                    <Navbar
-                        color="light"
-                        light
-                        expand="md"
-                        className="border-bottom border-primary"
-                        fixed="top"
-                    >
-                        <NavbarBrand href="/" className="text-primary">
-                            VGT
-            </NavbarBrand>
-                        <NavbarToggler onClick={this.navToggle} />
-                        <Collapse isOpen={this.state.navIsOpen} navbar>
-                            <Nav className="ml-auto" navbar>
-                                {/* <NavItem>
-                                    <form class="form-inline my=2 my-lg-0">
-                                        <input
-                                            class="form-control mr-sm-2"
-                                            type="search"
-                                            placeholder="Search Vocab"
-                                            aria-label="Search"
-                                        />
-                                        <button class="btn btn-primary my-2 my-sm-0" type="button">
-                                            Search
-                    </button>
-                                    </form>
-                                </NavItem> */}
-                                <NavItem>
-                                    <NavLink
-                                        href="#"
-                                        className="text-primary"
-                                        onClick={this.editToggle}
-                                    >
-                                        add vocab
-                  </NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink href="#" className="text-primary" onClick={this.props.handleRemoveAuthCookie}>
-                                        Logout
-                  </NavLink>
-                                </NavItem>
-                            </Nav>
-                        </Collapse>
-                    </Navbar>
-                </div>
+            <div className={this.state.theme + " appBackground Home"}>
+                <VGTNavbar 
+                    handleRemoveAuthCookie={this.props.handleRemoveAuthCookie}
+                    navToggle={this.navToggle}
+                    navIsOpen={this.state.navIsOpen}
+                    editToggle={this.editToggle}
+                    theme={this.state.theme}
+                    handleSetTheme={this.handleSetTheme}
+                    handleSearchInputChange={this.handleSearchInputChange}
+                    searchKey={this.state.searchKey}
+                />
                 <div class="container">
                     {this.state.isVocabLoading ?
                         (
                             <div class='row justify-content-center'>
-                                <div class="spinner-border text-primary" role="status">
+                                <div class={this.state.theme + " spinner-border"} role="status">
                                 </div>
                             </div>
                         ) : (
@@ -242,7 +249,7 @@ export default class Home extends React.Component {
                         )
 
                     }
-                    <VocabList vocabs={this.state.vocabs} editToggle={this.editToggle} editPanelOnChange={this.editPanelOnChange} handleRemoveClicked={this.handleRemoveClicked}
+                    <VocabList vocabs={this.state.displayVocabs} editToggle={this.editToggle} editPanelOnChange={this.editPanelOnChange} handleRemoveClicked={this.handleRemoveClicked} theme={this.state.theme}
                     />
                 </div>
                 <Edit
@@ -252,6 +259,7 @@ export default class Home extends React.Component {
                     editPanelOnChange={this.editPanelOnChange}
                     handleEditSubmittedClicked={this.handleEditSubmittedClicked}
                     isLoading={this.state.isLoading}
+                    theme={this.state.theme}
                 />
             </div>
         );

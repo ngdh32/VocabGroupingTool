@@ -11,8 +11,10 @@ import {
   withRouter
 } from "react-router-dom";
 import Cookies from 'universal-cookie';
-
-
+import './css/theme_classic.css'
+import './css/theme_classicpink.css'
+import './css/theme_reddark.css'
+import './css/theme_greendark.css'
 
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -49,10 +51,12 @@ class App extends React.Component {
 
   // key of authentication cookie
   vgt_auth = "vgt_auth"
+  vgt_theme = "vgt_theme"
 
   handleRemoveAuthCookie(){
     const cookies = new Cookies();
     cookies.remove(this.vgt_auth);
+    cookies.remove(this.vgt_theme);
     this.setState({
       vgt_auth: ""
     })
@@ -70,7 +74,7 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          <PrivateRoute vgt_auth={this.state.vgt_auth} path="/" component={Home} exact handleRemoveAuthCookie={this.handleRemoveAuthCookie} />
+          <PrivateRoute vgt_auth={this.state.vgt_auth} path="/" component={Home} exact handleRemoveAuthCookie={this.handleRemoveAuthCookie} vgt_theme={this.vgt_theme} />
           <Route path="/login" render={() => <Login vgt_auth={this.state.vgt_auth} handleSetAuthCookie={this.handleSetAuthCookie}  />} />
         </div>
       </Router>

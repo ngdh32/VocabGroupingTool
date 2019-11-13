@@ -1,5 +1,6 @@
 import React from "react";
 import { Collapse, Button } from "reactstrap";
+import VocabList from "./VocabList";
 
 const iconStyle = {
 
@@ -80,34 +81,29 @@ export default class Vocab extends React.Component {
         const subVocabs = this.props.subVocabs;
         return (
             <div
-                class={this.props.subVocabs.length > 0 ? "card border-primary" : "card"}
+                class={this.props.theme + (this.props.subVocabs.length > 0 ? " card mainFrame" : " card")}
             >
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <h5 class="card-title font-weight-bold">
+                            <h5 class={ this.props.theme + " card-title font-weight-bold"}>
                                 {this.props.word}
-                                {/* <a href="#">
-                                    <i class="material-icons" style={iconStyle}>
-                                        volume_down
-                  </i>
-                                </a> */}
                                 : {this.props.meaning}
                             </h5>
                         </div>
                         <div class="col-auto">
                             <a href="#" onClick={(e) => { this.addClick(e) }}>
-                                <i class="material-icons vocabIcon">
+                                <i class={this.props.theme + " material-icons vocabIcon"}>
                                     add_circle
                 </i>
                             </a>
                             <a href="#" onClick={(e) => { this.editClick(e) }}>
-                                <i class="material-icons vocabIcon">
+                                <i class={this.props.theme + " material-icons vocabIcon"}>
                                     edit
                 </i>
                             </a>
                             <a href="#" onClick={(e) => this.deleteClick(e, this.props.id)}>
-                                <i class="material-icons vocabIcon">
+                                <i class={this.props.theme + " material-icons vocabIcon"}>
                                     cancel
                 </i>
                             </a>
@@ -115,23 +111,30 @@ export default class Vocab extends React.Component {
                     </div>
                     <div class="row">
                         <div class="col">
-                            <p class="card-text">Example: </p>
-                            <p class="card-text">{this.props.example}</p>
+                            <p class={this.props.theme + " card-text"}>Example: </p>
+                            <p class={this.props.theme + " card-text"}>{this.props.example}</p>
                         </div>
                         <div class="col col-auto vocabDivMore">
                             {this.props.subVocabs.length > 0 && (
-                                <Button color="primary" onClick={this.toggle}>
+                                <Button className={this.props.theme + " button"} onClick={this.toggle}>
                                     More
-                </Button>
+                                </Button>
                             )}
                         </div>
                     </div>
                 </div>
                 <Collapse isOpen={this.state.isOpen}>
-                    <ul class="list-group">
+                    <VocabList 
+                        vocabs={this.props.subVocabs} 
+                        editToggle={this.props.editToggle} 
+                        editPanelOnChange={this.props.editPanelOnChange} 
+                        handleRemoveClicked={this.props.handleRemoveClicked} 
+                        theme={this.props.theme}
+                    />
+                    {/* <ul class="list-group">
                         {subVocabs.map(x => {
                             return (
-                                <li class="list-group-item">
+                                <li class={this.props.theme + " list-group-item"}>
                                     <Vocab
                                         id={x.id}
                                         parentId={x.parentId}
@@ -146,7 +149,7 @@ export default class Vocab extends React.Component {
                                 </li>
                             );
                         })}
-                    </ul>
+                    </ul> */}
                 </Collapse>
             </div>
         );
