@@ -245,12 +245,13 @@ export default class Home extends React.Component {
                                 </div>
                             </div>
                         ) : (
-                            <div></div>
+                            <div>
+                                <VocabList vocabs={this.state.displayVocabs} editToggle={this.editToggle} editPanelOnChange={this.editPanelOnChange} handleRemoveClicked={this.handleRemoveClicked} theme={this.state.theme}
+                                />
+                            </div>
                         )
 
                     }
-                    <VocabList vocabs={this.state.displayVocabs} editToggle={this.editToggle} editPanelOnChange={this.editPanelOnChange} handleRemoveClicked={this.handleRemoveClicked} theme={this.state.theme}
-                    />
                 </div>
                 <Edit
                     isOpen={this.state.editIsOpen}
