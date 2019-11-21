@@ -14,10 +14,11 @@
     "reactstrap": "^8.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "HTTPS=true react-scripts start",
+    "build": "react-scripts build && npm run build-sw",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build-sw": "node ./src/sw-build.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -33,5 +34,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "workbox-build": "^4.3.1"
   }
 }
