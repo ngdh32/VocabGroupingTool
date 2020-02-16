@@ -15,6 +15,7 @@ import config from '../Config.js';
 import ApiHelper from "../ApiHelper.js";
 import Cookies from 'universal-cookie';
 import VGTNavbar from "./VGTNavbar"
+import VocabsAPI from "../VocabsAPI"
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -47,6 +48,7 @@ export default class Home extends React.Component {
             displayVocabs: [],
             searchKey: ""
         };
+        this.vocabsAPI = new VocabsAPI(this);
     }
 
     // show/hide action loading spinner
@@ -68,31 +70,39 @@ export default class Home extends React.Component {
     }
 
     getVocabList() {
-        var bearer = 'Bearer ' + this.props.vgt_auth;
+        this.vocabsAPI.GetVocabListAPI();
+        // var bearer = 'Bearer ' + this.props.vgt_auth;
 
-        var requestConfigObject = {
-            method: 'GET',
-            headers: {
-                'Authorization': bearer
-            }
-        }
+        // var requestConfigObject = {
+        //     method: 'GET',
+        //     headers: {
+        //         'Authorization': bearer
+        //     }
+        // }
 
-        const _this = this;
+        // const _this = this;
 
-        // show loading spinner
-        _this.toggleisVocabLoading();
+        // // show loading spinner
+        // _this.toggleisVocabLoading();
 
-        // retrieve vocab list
-        ApiHelper.callApi("/api/vocabs/", requestConfigObject, _this.props.handleRemoveAuthCookie
-        , (res) => {
-            _this.setState({ vocabs: res.data, displayVocabs: res.data,searchKey: "" });
-            _this.toggleisVocabLoading();
-        }, (error) => {
-            _this.toggleisVocabLoading();
-        })
+        // // retrieve vocab list
+        // ApiHelper.callApi("/api/vocabs/", requestConfigObject, _this.props.handleRemoveAuthCookie
+        // , (res) => {
+        //     // update the vocablist in UI
+        //     _this.setState({ vocabs: res.data.vocabs, displayVocabs: res.data.vocabs,searchKey: "" });
+        //     // update the vocablist in IndexDB
+
+            
+        //     _this.toggleisVocabLoading();
+        // }, (error) => {
+        //     _this.toggleisVocabLoading();
+        // })
     }
 
     componentDidMount() {
+        // load the vocab list from indexDB first 
+        
+        // Then load the latest vocab list from server
         this.getVocabList();
     }
 
@@ -130,6 +140,11 @@ export default class Home extends React.Component {
     }
 
     handleRemoveClicked(deleteId) {
+        var confirmDelete = window.confirm("Confirm to delete?");
+        if (!confirmDelete){
+            return;
+        }
+
         var bearer = 'Bearer ' + this.props.vgt_auth;
 
         var requestConfigObject = {
@@ -142,7 +157,7 @@ export default class Home extends React.Component {
         const _this = this;
         const url = "/api/vocabs/" + deleteId;
 
-        ApiHelper.callApi(url, requestConfigObject, _this.props.handleRemoveAuthCookie
+        ApiHelper.callApi(url, requestConfigObject, _this.handleRemoveAuthCookie
         , (res) => {
             if (res.code == 200) {
                 _this.getVocabList();
@@ -175,7 +190,7 @@ export default class Home extends React.Component {
         this.toggleIsLoading()
 
         // retrieve vocab list
-        ApiHelper.callApi(url, requestConfigObject, _this.props.handleRemoveAuthCookie
+        ApiHelper.callApi(url, requestConfigObject, _this.handleRemoveAuthCookie
         , (res) => {
             if (res.code == 200) {
                 _this.editToggle();
@@ -208,6 +223,12 @@ export default class Home extends React.Component {
         }
     }
 
+    handleRemoveAuthCookie = () => {
+        this.vocabsAPI.RemoveAllIndexedDBEntries().then(() => {
+            this.props.handleRemoveAuthCookie();
+        })
+    }
+
     searchMatchVocabs = function(serachKey, vocabs){
         let matchVocabs = [];
         for(let i=0;i<vocabs.length;i++){
@@ -228,7 +249,7 @@ export default class Home extends React.Component {
         return (
             <div className={this.state.theme + " appBackground Home"}>
                 <VGTNavbar 
-                    handleRemoveAuthCookie={this.props.handleRemoveAuthCookie}
+                    handleRemoveAuthCookie={this.handleRemoveAuthCookie}
                     navToggle={this.navToggle}
                     navIsOpen={this.state.navIsOpen}
                     editToggle={this.editToggle}

@@ -7,29 +7,36 @@ using System.Linq;
 
 namespace VocabGroupingToolCore.Models.VocabModel
 {
-    public class VocabViewObject
+    public class VocabViewObjectWithTime
+    {
+        public List<VocabViewObject> vocabs { get; set; }
+        public DateTime? lastVocabUpdateDate { get; set; }
+    }
+
+    public class VocabViewObject : Vocab
     {
         public VocabViewObject()
         {
             SubVocabs = new List<VocabViewObject>();
         }
 
-        public int? Id { get; set; }
-        public string Word { get; set; }
-        public string Meaning { get; set; }
-        public string Example { get; set; }
-        public int? ParentId { get; set; }
+        // public string? Id { get; set; }
+        // public string Word { get; set; }
+        // public string Meaning { get; set; }
+        // public string Example { get; set; }
+        // public int? ParentId { get; set; }
 
-        public string UserId { get; set; }
+        // public string UserId { get; set; }
 
         public List<VocabViewObject> SubVocabs { get; set; }
 
         // create a vocab list for Home.js
-        public static List<VocabViewObject> CreateVocabViewObjectList(List<Vocab> vocabs, int? parentId)
+        public static List<VocabViewObject> CreateVocabViewObjectList(List<Vocab> vocabs, string parentId)
         {
-            List<VocabViewObject> result = new List<VocabViewObject>(); 
+            List<VocabViewObject> result = new List<VocabViewObject>();
             var parentVocabs = vocabs.Where(x => x.ParentId == parentId).ToList();
-            foreach(var vocab in parentVocabs){
+            foreach (var vocab in parentVocabs)
+            {
                 VocabViewObject vocabViewObject = new VocabViewObject();
                 vocabViewObject.Id = vocab.Id;
                 vocabViewObject.Word = vocab.Word;
@@ -41,7 +48,7 @@ namespace VocabGroupingToolCore.Models.VocabModel
                 vocabViewObject.SubVocabs = CreateVocabViewObjectList(vocabs, vocab.Id);
                 result.Add(vocabViewObject);
             }
-            
+
             return result;
         }
 

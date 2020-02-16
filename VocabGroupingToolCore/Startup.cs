@@ -51,7 +51,7 @@ namespace VocabGroupingToolCore
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(connectionString));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -78,7 +78,7 @@ namespace VocabGroupingToolCore
                     b.UseMySql(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
                 options.EnableTokenCleanup = true;
             })
-            .AddAspNetIdentity<IdentityUser>()
+            .AddAspNetIdentity<ApplicationUser>()
             // .AddDeveloperSigningCredential();
             .AddSigningCredential(GetCertificate()); // use the certificate so that the token is still valid after application is rebooted
 
@@ -112,7 +112,7 @@ namespace VocabGroupingToolCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<IdentityUser> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager)
         {
             // Uncomment when data seeding is needed
             if (Configuration["data_migration"] == "Y")
@@ -140,7 +140,7 @@ namespace VocabGroupingToolCore
         }
 
 
-        private void InitializeDatabase(IApplicationBuilder app, UserManager<IdentityUser> userManager)
+        private void InitializeDatabase(IApplicationBuilder app, UserManager<ApplicationUser> userManager)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {

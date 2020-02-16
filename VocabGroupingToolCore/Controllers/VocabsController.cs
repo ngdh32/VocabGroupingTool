@@ -8,6 +8,8 @@ using VocabGroupingToolCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 // using System.Threading;
 
 
@@ -18,27 +20,68 @@ namespace VocabGroupingToolCore.Controllers
     [ApiController]
     public class VocabsController : ControllerBase
     {
-        private ApplicationDbContext dbContext;
+        private ApplicationDbContext dbContext { get; set; }
 
-        public VocabsController(ApplicationDbContext _dbContext)
+        private UserManager<ApplicationUser> userManager { get; set; }
+
+        public VocabsController(ApplicationDbContext _dbContext, UserManager<ApplicationUser> _userManager)
         {
             dbContext = _dbContext;
+            userManager = _userManager;
         }
 
         // GET api/values
         [Authorize]
         [HttpGet]
-        public ActionResult<ResultModel> Get()
+        public async Task<ActionResult<ResultModel>> Get()
+        {
+            return await Get(null);
+        }
+
+        [Authorize]
+        [HttpGet("{lastVocabUpdateDate}")]
+        public async Task<ActionResult<ResultModel>> Get(string lastVocabUpdateDate)
         {
             ResultModel result = new ResultModel();
 
             var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
             if (nameIdentifier != null)
             {
+                var user = await userManager.FindByIdAsync(nameIdentifier.Value);
                 string userId = nameIdentifier.Value;
                 result.Code = 200;
                 result.Message = "";
-                result.Data = VocabViewObject.CreateVocabViewObjectList(dbContext.Vocabs.Where(x => x.UserId == userId).ToList(), null);
+                //result.Data = VocabViewObject.CreateVocabViewObjectList(dbContext.Vocabs.Where(x => x.UserId == userId).ToList(), null);
+                if (!string.IsNullOrEmpty(lastVocabUpdateDate))
+                {
+                    DateTime lastVocabUpdateDateInput = Convert.ToDateTime(lastVocabUpdateDate);
+                    if (lastVocabUpdateDateInput == user.lastVocabUpdateDate)
+                    {
+                        result.Data = new VocabViewObjectWithTime()
+                        {
+                            vocabs = null,
+                            lastVocabUpdateDate = user.lastVocabUpdateDate
+                        };
+                    }
+                    else
+                    {
+                        result.Data = new VocabViewObjectWithTime()
+                        {
+                            vocabs = VocabViewObject.CreateVocabViewObjectList(dbContext.Vocabs.Where(x => x.UserId == userId).ToList(), null),
+                            lastVocabUpdateDate = user.lastVocabUpdateDate
+                        };
+                    }
+                }
+                else
+                {
+                    result.Data = new VocabViewObjectWithTime()
+                    {
+                        vocabs = VocabViewObject.CreateVocabViewObjectList(dbContext.Vocabs.Where(x => x.UserId == userId).ToList(), null),
+                        lastVocabUpdateDate = user.lastVocabUpdateDate
+                    };
+                }
+
+                return result;
 
             }
             else
@@ -52,17 +95,17 @@ namespace VocabGroupingToolCore.Controllers
         }
 
         // GET api/values/5
-        [Authorize]
-        [HttpGet("{id}")]
-        public ActionResult<Vocab> Get(int id)
-        {
-            return dbContext.Vocabs.Where(x => x.Id == id).FirstOrDefault();
-        }
+        // [Authorize]
+        // [HttpGet("{id}")]
+        // public ActionResult<Vocab> Get(string id)
+        // {
+        //     return dbContext.Vocabs.Where(x => x.Id == id).FirstOrDefault();
+        // }
 
         // POST api/values
         [HttpPost]
         [Authorize]
-        public ActionResult<ResultModel> Post([FromBody] Vocab vocab)
+        public async Task<ActionResult<ResultModel>> Post([FromBody] Vocab vocab)
         {
             // Thread.Sleep(2000);
             var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
@@ -80,8 +123,13 @@ namespace VocabGroupingToolCore.Controllers
             int result = dbContext.SaveChanges();
             if (result == 1)
             {
+                var user = await userManager.FindByIdAsync(nameIdentifier.Value);
+                user.lastVocabUpdateDate = DateTime.UtcNow;
+                await userManager.UpdateAsync(user);
+
                 return new ResultModel()
                 {
+
                     Code = 200
                     ,
                     Message = ""
@@ -102,8 +150,21 @@ namespace VocabGroupingToolCore.Controllers
         // PUT api/values/5
         [HttpPost("{id}")]
         [Authorize]
-        public ActionResult<ResultModel> Put([FromBody] Vocab vocab)
+        public async Task<ActionResult<ResultModel>> Put([FromBody] Vocab vocab)
         {
+            var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
+            if (nameIdentifier == null)
+            {
+                return new ResultModel()
+                {
+                    Code = 200
+                    ,
+                    Message = "User ID is not in header"
+                };
+            };
+            var user = await userManager.FindByIdAsync(nameIdentifier.Value);
+            user.lastVocabUpdateDate = DateTime.UtcNow;
+            await userManager.UpdateAsync(user);
 
             Vocab foundVocab = dbContext.Vocabs.Where(x => x.Id == vocab.Id).FirstOrDefault();
             if (foundVocab == null)
@@ -146,8 +207,23 @@ namespace VocabGroupingToolCore.Controllers
         // DELETE api/values/5
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<ResultModel> Delete(int id)
+        public async Task<ActionResult<ResultModel>>Delete(string id)
         {
+            var nameIdentifier = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
+            if (nameIdentifier == null)
+            {
+                return new ResultModel()
+                {
+                    Code = 200
+                    ,
+                    Message = "User ID is not in header"
+                };
+            };
+            var user = await userManager.FindByIdAsync(nameIdentifier.Value);
+            user.lastVocabUpdateDate = DateTime.UtcNow;
+            await userManager.UpdateAsync(user);
+
+
             Vocab foundVocab = dbContext.Vocabs.Where(x => x.Id == id).FirstOrDefault();
             if (foundVocab == null)
             {

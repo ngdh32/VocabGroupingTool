@@ -27,9 +27,9 @@ namespace VocabGroupingToolCore.Controllers
 
         private IConfiguration configuration { get; set; }
 
-        private UserManager<IdentityUser> userManager { get; set; }
+        private UserManager<ApplicationUser> userManager { get; set; }
 
-        public AuthenticationController(ApplicationDbContext _dbContext, IConfiguration _configuration, UserManager<IdentityUser> _userManager)
+        public AuthenticationController(ApplicationDbContext _dbContext, IConfiguration _configuration, UserManager<ApplicationUser> _userManager)
         {
             dbContext = _dbContext;
             configuration = _configuration;
@@ -115,7 +115,7 @@ namespace VocabGroupingToolCore.Controllers
                 }
 
 
-                user = new IdentityUser
+                user = new ApplicationUser
                 {
                     //Id = Guid.NewGuid().ToString(),
                     UserName = loginView.name,

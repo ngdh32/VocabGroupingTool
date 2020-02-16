@@ -117,7 +117,7 @@ export default class Vocab extends React.Component {
                         <div class="col col-auto vocabDivMore">
                             {this.props.subVocabs.length > 0 && (
                                 <Button className={this.props.theme + " button"} onClick={this.toggle}>
-                                    More
+                                    {this.state.isOpen? "Hide": "More"}
                                 </Button>
                             )}
                         </div>
