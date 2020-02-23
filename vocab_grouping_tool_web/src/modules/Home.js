@@ -26,7 +26,7 @@ export default class Home extends React.Component {
         this.editToggle = this.editToggle.bind(this);
         this.editPanelOnChange = this.editPanelOnChange.bind(this);
         this.handleEditSubmittedClicked = this.handleEditSubmittedClicked.bind(this)
-        this.getVocabList = this.getVocabList.bind(this);
+        // this.getVocabList = this.getVocabList.bind(this);
         this.handleRemoveClicked = this.handleRemoveClicked.bind(this);
         this.toggleIsLoading = this.toggleIsLoading.bind(this);
         this.toggleisVocabLoading = this.toggleisVocabLoading.bind(this);
@@ -69,8 +69,8 @@ export default class Home extends React.Component {
         })
     }
 
-    getVocabList() {
-        this.vocabsAPI.GetVocabListAPI();
+    // getVocabList() {
+    //     this.vocabsAPI.GetVocabListAPI();
         // var bearer = 'Bearer ' + this.props.vgt_auth;
 
         // var requestConfigObject = {
@@ -97,13 +97,13 @@ export default class Home extends React.Component {
         // }, (error) => {
         //     _this.toggleisVocabLoading();
         // })
-    }
+    // }
 
     componentDidMount() {
         // load the vocab list from indexDB first 
         
         // Then load the latest vocab list from server
-        this.getVocabList();
+        this.vocabsAPI.GetVocabListAPI();
     }
 
     // handle the chnage of input in edit panel
@@ -160,7 +160,7 @@ export default class Home extends React.Component {
         ApiHelper.callApi(url, requestConfigObject, _this.handleRemoveAuthCookie
         , (res) => {
             if (res.code == 200) {
-                _this.getVocabList();
+                _this.vocabsAPI.GetVocabListAPI(true);
             } else {
                 console.log(res);
             }
@@ -194,7 +194,7 @@ export default class Home extends React.Component {
         , (res) => {
             if (res.code == 200) {
                 _this.editToggle();
-                _this.getVocabList();
+                _this.vocabsAPI.GetVocabListAPI(true);
                 _this.toggleIsLoading();
             } 
         }, (error) => {

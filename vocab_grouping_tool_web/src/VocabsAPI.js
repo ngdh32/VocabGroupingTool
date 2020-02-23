@@ -8,14 +8,13 @@ export default class VocabAPI {
         this.vocabQueueWorker = new Worker(web_worker_url);
         this.vocabQueueWorker.onmessage = this.processResultFromVocabQueueWorker;
 
-        // passs the config parameter
+        // pass the init parameters to VocabQueueWorker
         const initParameter = {
-            config: config,
-            vgt_auth: vocabContext.props.vgt_auth
+            config: config, // pass the config value
+            vgt_auth: vocabContext.props.vgt_auth // pass the auth cookie value
         }
         const initializeRequest = new RequestQueueObject("init", initParameter);
         this.vocabQueueWorker.postMessage(initializeRequest);
-        // this.initVocabsIndexedDB();
     }
 
     VGTDBName = "VGT";
@@ -23,11 +22,11 @@ export default class VocabAPI {
     VocabsStore_Id = config.VGT_VGT_Info_ObjectStore_Id;
     VocabsStore_Vocabs_Id = config.VocabsStore_Vocabs_Id; // key:0 actually stores the whole vocablist instead of a single vocab 
     VocabsStore_lastVocabModifiedDate_Id = config.VocabsStore_lastVocabModifiedDate_Id; // key:1 stores the last Vocab modified date
-    // indexedDBFirstTimeAccess = false;
 
     _db = null;
 
 
+    // process the result from VocabQueueWorker
     processResultFromVocabQueueWorker = (msg) => {
         const responseObject = msg.data;
         // if 401/403 then logout
@@ -53,6 +52,7 @@ export default class VocabAPI {
         });
     }
 
+    // initialize the indexedDB
     initVocabsIndexedDB = () => {
         let _this = this;
         return new Promise(function (successCallback, errorCallback) {
@@ -67,8 +67,6 @@ export default class VocabAPI {
 
                 // Create the queue objectstore for this database
                 _this._db.createObjectStore(config.VGT_Queue_ObjectStore, { keyPath: config.VGT_Queue_ObjectStore_Id, autoIncrement: true });
-
-                // _this.indexedDBFirstTimeAccess = true;
             };
 
             request.onsuccess = function (event) {
@@ -84,30 +82,34 @@ export default class VocabAPI {
         })
     }
 
-    // the top level of getting vocab list
-    GetVocabListAPI = () => {
+    // the top level of getting vocab list called by Home.js
+    GetVocabListAPI = (isFromServerOnly) => {
         let _this = this;
-        // show loading spin
+        // show the loading spin
         _this.vocabContext.setState({
             isVocabLoading: true
         })
-        // get vocabs list from indexedDB
-        _this.GetVocabListFromIndexedDB().then((res) => {
-            // check whether the indxedDB is first time access
-            // console.log("indexedDBFirstTimeAccess:" + _this.indexedDBFirstTimeAccess)
-            if (res != undefined) {
-                // only load vocablist if entry can be returned
-                const vocabs = res.data;
-                _this.vocabContext.setState({ vocabs: vocabs, displayVocabs: vocabs, searchKey: "" });
-                _this.vocabContext.setState({
-                    isVocabLoading: false
-                })
-            }
-        }).then(() => {
-            // send getVocabList request to queue
-            const getRequest = new RequestQueueObject("GetVocabListFromServer", "GetVocabListFromServer");
+        // send getVocabList request to queue
+        const getRequest = new RequestQueueObject("GetVocabListFromServer", []);
+
+        if (isFromServerOnly){
             _this.vocabQueueWorker.postMessage(getRequest);
-        });
+        }else {
+            // get vocabs list from indexedDB
+            _this.GetVocabListFromIndexedDB().then((res) => {
+                // check if there is a vocab list in indexedDB
+                if (res != undefined) {
+                    // only load vocablist if entry can be returned
+                    const vocabs = res.data;
+                    _this.vocabContext.setState({ vocabs: vocabs, displayVocabs: vocabs, searchKey: "" });
+                    _this.vocabContext.setState({
+                        isVocabLoading: false
+                    })
+                }
+            }).then(() => {
+                _this.vocabQueueWorker.postMessage(getRequest);
+            });
+        }
     }
 
     // get vocablist from indexedDB
@@ -134,7 +136,7 @@ export default class VocabAPI {
 
             });
         });
-        // return {"code":200,"message":"","data":{"vocabs":[{"id":1,"word":"test","meaning":"test","example":"test","parentId":null,"userId":"5a349e36-6f7f-48ca-932f-9bf0bb67e73f","subVocabs":[]},{"id":2,"word":"a","meaning":"a","example":"a","parentId":null,"userId":"5a349e36-6f7f-48ca-932f-9bf0bb67e73f","subVocabs":[]}],"lastVocabUpdateDate":"2019-11-27T13:52:49.95584"}}
+        
     }
 
     // get vocablist from server
@@ -149,6 +151,7 @@ export default class VocabAPI {
             // check if the date can be retrived or not
             let lastVocabUpdateDate = request.result == undefined ? null : request.result.data;
             console.log(res)
+            // check if the last updated vocab date in indexedDB is equal to the one from server
             if (res.data.lastVocabUpdateDate == lastVocabUpdateDate) {
                 console.log("Vocablist are synced with Server")
             } else {
@@ -244,9 +247,11 @@ export default class VocabAPI {
         const _this = this;
         return new Promise(function (successCallback, errorCallback) {
             _this.getVocabIndexedDBReady().then(() => {
+                // terminate the VocabQueueWorker
                 _this.vocabQueueWorker.terminate();
                 let transaction = _this._db.transaction([config.VGT_VGT_Info_ObjectStore, config.VGT_Queue_ObjectStore], "readwrite");
                 let VocabObjectStore = transaction.objectStore(config.VGT_VGT_Info_ObjectStore);
+                // clear all the indexedDB data
                 let VocabObjectStoreClear = VocabObjectStore.clear();
                 VocabObjectStoreClear.onsuccess = () => {
                     console.log("Successfullu clearing vocab objectstore")

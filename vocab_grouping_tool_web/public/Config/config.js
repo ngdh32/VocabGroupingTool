@@ -9,5 +9,5 @@ var global_config = {
     ,"VocabsStore_Vocabs_Id" : 0
     ,"VocabsStore_lastVocabModifiedDate_Id" : 1
     ,"VGT_IndexedDB_Version": 1
-    ,"queueProcessorTimeInterval": 10000
+    ,"queueProcessorTimeInterval": 3000
 }

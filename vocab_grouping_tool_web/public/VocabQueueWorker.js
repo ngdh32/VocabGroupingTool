@@ -35,6 +35,8 @@ const getQueueIndexedDB = () => {
     });
 }
 
+
+// initialize the indexedDB
 const initQueueIndexedDB = () => {
     return new Promise(function (successCallback, errorCallback) {
 
@@ -66,12 +68,10 @@ const initQueueIndexedDB = () => {
 
 
 
-// self.addEventListener("message", function (msg) {
 onmessage = function(msg){
     if (msg.data.functionMethod === "init") {
         let initParameters = msg.data.parameters[0];
         config = initParameters.config;
-        console.log(initParameters.vgt_auth)
         vgt_auth = initParameters.vgt_auth;
         QueueStore_Name = config.VGT_Queue_ObjectStore;
         QueueStore_Id = config.VGT_Queue_ObjectStore_Id;
@@ -139,7 +139,7 @@ const VocabAPI = {
 
             request.onerror = error => {
                 console.log("Error occurs when retriving lastvocabupdatetime from indexedDB")
-                console.log(error)
+                console.log(error);
                 errorCallback();
             }
         })
@@ -174,7 +174,7 @@ const callApi = (url, options, callback, errorCallback) => {
 }
 
 const SetupProcessRequestQueue = () => {
-    // always setup the queueProcessor for the next run
+    // always setup the queueProcessor for the next run no matter successful or failure call
     ProcessRequestQueue().then(() => {
         queueProcessor = setTimeout(SetupProcessRequestQueue, config.queueProcessorTimeInterval);
     }).catch(error => {
@@ -205,31 +205,37 @@ const ProcessRequestQueue = () => {
                     console.log('Queue cursor is done');
                 }
 
-
+                let isRequestFromQueue = true;
                 if (requestObject == null) {
                     console.log("No request...")
+                    // if no request, send a get request to server to keep checking whether the vocablist in server is updated
+                    requestObject = {
+                        functionMethod : "GetVocabListFromServer",
+                        parameters: []
+                    }
+                    isRequestFromQueue = false
+                } 
+                
+                VocabAPI[requestObject.functionMethod](...requestObject.parameters).then(() => {
+                    console.log("Request is done sccessfully");
+                    // remove the object if the request is from queue
+                    if (isRequestFromQueue){
+                        let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
+                        let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
+                        deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id])
+                    }
                     successCallback();
-                } else {
-                    console.log("Request is retrieved from queue")
-                    console.log(requestObject)
-                    console.log(this)
-                    console.log(Array.isArray(requestObject.parameters))
-                    VocabAPI[requestObject.functionMethod](...requestObject.parameters).then(() => {
-                        console.log("Request is done sccessfully");
-                        // remove the object
+                }).catch(error => {
+                    console.log("Request is done unsccessfully");
+                    // remove the object if the request is from queue
+                    if (isRequestFromQueue){
                         let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
                         let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
                         deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id])
-                        successCallback();
-                    }).catch(error => {
-                        console.log("Request is done unsccessfully");
-                        // remove the object
-                        let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
-                        let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
-                        deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id])
-                        errorCallback();
-                    });
-                }
+                    }
+                    errorCallback();
+                });
+                
             };
 
             openCursor.onerror = function (error) {
@@ -242,17 +248,3 @@ const ProcessRequestQueue = () => {
     });
 }
 
-// const workercode = () => {
-    
-
-// }
-
-
-
-// // create the temp javascript content and return the url of it
-// let code = workercode.toString();
-// console.log(code);
-// code = code.substring(code.indexOf("{") + 1, code.lastIndexOf("}"));
-// const blob = new Blob([code], { type: "application/javascript" })
-// const worker_script = URL.createObjectURL(blob)
-// export default worker_script
