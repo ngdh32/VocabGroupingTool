@@ -45,7 +45,7 @@ const initQueueIndexedDB = () => {
         request.onsuccess = function (event) {
             _db = event.target.result;
 
-            console.log("Indexed DB is successfully created")
+            console.log("Queue Indexed DB is successfully created")
             successCallback();
         }
 

@@ -6,10 +6,80 @@ this.importScripts("/VocabWorkerCommon.js")
 onmessage = function(msg){
     if (msg.data.functionMethod === "init") {
         let initParameters = msg.data.parameters[0];
-        initConfigValues(initParameters)
+        initConfigValues(initParameters);
+        SetupProcessRequestQueue();
     } else {
-        
+        // no direct call from main thread
     }
+}
+
+const SetupProcessRequestQueue = () => {
+    ProcessRequestQueue().then(() => {
+        SetupProcessRequestQueue();
+    }).catch(error => {
+        SetupProcessRequestQueue();
+    })
+}
+
+
+
+const ProcessRequestQueue = () => {
+    return new Promise(function (successCallback, errorCallback) {
+        getQueueIndexedDB().then(() => {
+            let transaction = _db.transaction([QueueStore_Name], "readwrite");
+            let objectStore = transaction.objectStore(QueueStore_Name);
+            let openCursor = objectStore.openCursor();
+            let requestObject = null;
+
+            transaction.oncomplete = function(){
+                if (requestObject != null){
+                    console.log("New request is retrieved:" + requestObject[QueueStore_Id])
+                    VocabAPI[requestObject.functionMethod](...requestObject.parameters).then(() => {
+                        console.log("Request is done sccessfully");
+                    }).catch(error => {
+                        console.log("Request is done unsccessfully");
+                    }).finally(() => {
+                        console.log("ProcessRequestQueue Finally called")
+                        let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
+                        let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
+                        let deleteRequest = deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id]);
+
+                        deleteRequest.onsuccess = function(){
+                            successCallback();
+                        }
+
+                        deleteRequest.onerror = function(){
+                            errorCallback();
+                        }
+                    });
+                }else{
+                    //console.log("No request is handled")
+                    successCallback();
+                }
+            }
+
+            openCursor.onsuccess = function (event) {
+                var cursor = event.target.result;
+                // searching for the request object with the most minimum id
+                if (cursor) {
+                    if (requestObject == null) {
+                        requestObject = cursor.value;
+                    } else if (requestObject[QueueStore_Id] > cursor.value[QueueStore_Id]) {
+                        requestObject = cursor.value;
+                    }
+
+                    cursor.continue();
+                } 
+            };
+
+            openCursor.onerror = function (error) {
+                console.log("The cursor failed to be opened");
+                console.log(error)
+                errorCallback();
+            }
+
+        });
+    });
 }
 
 // Vocab related API functions
@@ -26,13 +96,14 @@ const VocabAPI = {
                 }
             }
 
+            // retrieve the last vocablist updated timestamp from indexedDB and send it to the server
+            // to check if there is any update on the vocablist in the server
             let transaction = _db.transaction([config.VGT_VGT_Info_ObjectStore], "readwrite");
             let objectStore = transaction.objectStore(config.VGT_VGT_Info_ObjectStore);
             let request = objectStore.get(config.VocabsStore_lastVocabModifiedDate_Id);
 
             request.onsuccess = event => {
-                // retrieve vocab list
-                let lastVocabUpdateDate = request.result == undefined ? "" : request.result.data;
+                let lastVocabUpdateDate = request.result == undefined ? "" : request.result.data; // if the timestamp cannot be retrieved, send empty string instead
                 callApi("/api/vocabs/" + lastVocabUpdateDate, requestConfigObject
                     , (res) => {
                         // send the result back to main thread
@@ -55,7 +126,7 @@ const VocabAPI = {
         })
     }
 
-    
+
 };
 
 const callApi = (url, options, callback, errorCallback) => {
@@ -67,7 +138,7 @@ const callApi = (url, options, callback, errorCallback) => {
                 const response = new ResponseQueueObject("401", null);
                 // return the 401 response to app so that it will log
                 postMessage(response);
-                errorCallback();
+                errorCallback(); 
             }
 
             // deserialize the response into JSON object
@@ -85,77 +156,4 @@ const callApi = (url, options, callback, errorCallback) => {
         });
 }
 
-const SetupProcessRequestQueue = () => {
-    // always setup the queueProcessor for the next run no matter successful or failure call
-    ProcessRequestQueue().then(() => {
-        queueProcessor = setTimeout(SetupProcessRequestQueue, config.queueProcessorTimeInterval);
-    }).catch(error => {
-        queueProcessor = setTimeout(SetupProcessRequestQueue, config.queueProcessorTimeInterval);
-    })
-}
 
-const ProcessRequestQueue = () => {
-    // let _self = self;
-    return new Promise(function (successCallback, errorCallback) {
-        getQueueIndexedDB().then(() => {
-            let transaction = _db.transaction([QueueStore_Name], "readwrite");
-            let objectStore = transaction.objectStore(QueueStore_Name);
-            let openCursor = objectStore.openCursor();
-
-            openCursor.onsuccess = function (event) {
-                let requestObject = null;
-                var cursor = event.target.result;
-                if (cursor) {
-                    if (requestObject == null) {
-                        requestObject = cursor.value;
-                    } else if (requestObject[QueueStore_Id] > cursor.value[QueueStore_Id]) {
-                        requestObject = cursor.value;
-                    }
-
-                    cursor.continue();
-                } else {
-                    console.log('Queue cursor is done');
-                }
-
-                let isRequestFromQueue = true;
-                if (requestObject == null) {
-                    console.log("No request...")
-                    // if no request, send a get request to server to keep checking whether the vocablist in server is updated
-                    requestObject = {
-                        functionMethod : "GetVocabListFromServer",
-                        parameters: []
-                    }
-                    isRequestFromQueue = false
-                } 
-                
-                VocabAPI[requestObject.functionMethod](...requestObject.parameters).then(() => {
-                    console.log("Request is done sccessfully");
-                    // remove the object if the request is from queue
-                    if (isRequestFromQueue){
-                        let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
-                        let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
-                        deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id])
-                    }
-                    successCallback();
-                }).catch(error => {
-                    console.log("Request is done unsccessfully");
-                    // remove the object if the request is from queue
-                    if (isRequestFromQueue){
-                        let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");
-                        let deleteQueueObjectStore = deleteTransaction.objectStore(QueueStore_Name);
-                        deleteQueueObjectStore.delete(requestObject[config.VGT_Queue_ObjectStore_Id])
-                    }
-                    errorCallback();
-                });
-                
-            };
-
-            openCursor.onerror = function (error) {
-                console.log("Request is unsuccessfully inserted");
-                console.log(error)
-                errorCallback();
-            }
-
-        });
-    });
-}

@@ -1,13 +1,13 @@
 import config from './Config.js';
 
-const web_worker_url = "/VocabQueueWorker.js";
 
 export default class VocabAPI {
     constructor(vocabContext) {
         this.vocabContext = vocabContext;
-        this.vocabQueueWorker = new Worker(web_worker_url);
-        this.vocabQueueWorker.onmessage = this.processResultFromVocabQueueWorker;
-
+        this.vocabQueueWorker = new Worker("/VocabQueueWorker.js");
+        
+        this.vocabProcessWorker = new Worker("/VocabProcessorWorker.js");
+        this.vocabProcessWorker.onmessage = this.processResultFromVocabQueueWorker
         // pass the init parameters to VocabQueueWorker
         const initParameter = {
             config: config, // pass the config value
@@ -15,18 +15,14 @@ export default class VocabAPI {
         }
         const initializeRequest = new RequestQueueObject("init", initParameter);
         this.vocabQueueWorker.postMessage(initializeRequest);
+        this.vocabProcessWorker.postMessage(initializeRequest);
     }
 
     VGTDBName = "VGT";
-    VocabsStore_Name = config.VGT_VGT_Info_ObjectStore;
-    VocabsStore_Id = config.VGT_VGT_Info_ObjectStore_Id;
-    VocabsStore_Vocabs_Id = config.VocabsStore_Vocabs_Id; // key:0 actually stores the whole vocablist instead of a single vocab 
-    VocabsStore_lastVocabModifiedDate_Id = config.VocabsStore_lastVocabModifiedDate_Id; // key:1 stores the last Vocab modified date
-
     _db = null;
 
 
-    // process the result from VocabQueueWorker
+    // process the result from VocabProcessWorker
     processResultFromVocabQueueWorker = (msg) => {
         const responseObject = msg.data;
         // if 401/403 then logout
@@ -35,7 +31,6 @@ export default class VocabAPI {
         } else {
             this[responseObject.functionMethod](responseObject.result);
         }
-
     }
 
     // get indexed DB. If indexedDB is not initialized, initialize one and assign the newly created db 
@@ -71,7 +66,7 @@ export default class VocabAPI {
 
             request.onsuccess = function (event) {
                 _this._db = event.target.result;
-                console.log("Indexed DB is successfully created")
+                console.log("Vocabs Indexed DB is successfully created")
                 successCallback();
             }
 
@@ -92,6 +87,7 @@ export default class VocabAPI {
         // send getVocabList request to queue
         const getRequest = new RequestQueueObject("GetVocabListFromServer", []);
 
+        
         if (isFromServerOnly){
             _this.vocabQueueWorker.postMessage(getRequest);
         }else {
@@ -124,8 +120,6 @@ export default class VocabAPI {
 
                 request.onsuccess = function (event) {
                     console.log("VGT vocabs retrieved from indexed DB")
-                    console.log(request);
-                    console.log(request.result);
                     successCallback(request.result);
                 };
 
@@ -150,18 +144,19 @@ export default class VocabAPI {
         request.onsuccess = event => {
             // check if the date can be retrived or not
             let lastVocabUpdateDate = request.result == undefined ? null : request.result.data;
-            console.log(res)
             // check if the last updated vocab date in indexedDB is equal to the one from server
             if (res.data.lastVocabUpdateDate == lastVocabUpdateDate) {
                 console.log("Vocablist are synced with Server")
             } else {
                 console.log("VocabList is updated in Server. Syncing with the server")
+                // update the ui with the latest vocablist
                 _this.vocabContext.setState({
                     vocabs: res.data.vocabs,
                     displayVocabs: res.data.vocabs,
                     searchKey: "",
                     isVocabLoading: false
                 })
+                // need to update the vocab list before the last vocab modified date
                 const vocabList = {};
                 vocabList[config.VGT_VGT_Info_ObjectStore_Id] = config.VocabsStore_Vocabs_Id;
                 vocabList["data"] = res.data.vocabs;
@@ -172,6 +167,7 @@ export default class VocabAPI {
                     lastVocabUpdateDateObject[config.VGT_VGT_Info_ObjectStore_Id] = config.VocabsStore_lastVocabModifiedDate_Id;
                     lastVocabUpdateDateObject["data"] = res.data.lastVocabUpdateDate;
                     let lastVocabUpdateDateRequest = objectStore.put(lastVocabUpdateDateObject);
+                    
                     lastVocabUpdateDateRequest.onsuccess = () => {
                         console.log("lastVocabUpdateDate in IndexedDB updated successfully")
                     }
