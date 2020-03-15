@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import {
+    Alert,
     Collapse,
     Navbar,
     NavbarToggler,
@@ -46,7 +47,9 @@ export default class Home extends React.Component {
             },
             vocabs: [],
             displayVocabs: [],
-            searchKey: ""
+            searchKey: "",
+            alertOKOpened: false,
+            alertErrorOpened: false
         };
         this.vocabsAPI = new VocabsAPI(this);
     }
@@ -245,6 +248,11 @@ export default class Home extends React.Component {
         return matchVocabs;
     }
 
+
+    handleRefreshClicked = () => {
+        window.location.reload();
+    }
+
     render() {
         return (
             <div className={this.state.theme + " appBackground Home"}>
@@ -273,6 +281,14 @@ export default class Home extends React.Component {
                         )
 
                     }
+                    <div class="divAlert">
+                        <Alert color="primary" isOpen={this.state.alertOKOpened} toggle={() => this.setState({alertOKOpened: false})}>
+                            Vocabs are synced with the server.
+                        </Alert>
+                        <Alert color="danger" isOpen={this.state.alertErrorOpened} toggle={() => this.setState({alertErrorOpened: false})}>
+                            Problem occurs when syncing with the server. <a href="#" onClick={this.handleRefreshClicked}>Refresh</a>
+                        </Alert>
+                    </div>
                 </div>
                 <Edit
                     isOpen={this.state.editIsOpen}

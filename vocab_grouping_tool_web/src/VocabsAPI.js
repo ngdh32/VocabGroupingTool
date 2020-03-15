@@ -28,7 +28,10 @@ export default class VocabAPI {
         // if 401/403 then logout
         if (responseObject.functionMethod == 403 || responseObject.functionMethod == 401) {
             this.vocabContext.handleRemoveAuthCookie();
-        } else {
+        } else if(responseObject.functionMethod == "ERROR"){
+            this.vocabContext.setState({alertErrorOpened: true});
+        }
+        else {
             this[responseObject.functionMethod](responseObject.result);
         }
     }
@@ -144,9 +147,11 @@ export default class VocabAPI {
         request.onsuccess = event => {
             // check if the date can be retrived or not
             let lastVocabUpdateDate = request.result == undefined ? null : request.result.data;
+            alert("Have problenm with res.data when the application is firstly launched for the first time")
             // check if the last updated vocab date in indexedDB is equal to the one from server
             if (res.data.lastVocabUpdateDate == lastVocabUpdateDate) {
-                console.log("Vocablist are synced with Server")
+                console.log("Vocablist are synced with Server");
+                this.vocabContext.setState({alertOKOpened: true});
             } else {
                 console.log("VocabList is updated in Server. Syncing with the server")
                 // update the ui with the latest vocablist
@@ -169,15 +174,18 @@ export default class VocabAPI {
                     let lastVocabUpdateDateRequest = objectStore.put(lastVocabUpdateDateObject);
                     
                     lastVocabUpdateDateRequest.onsuccess = () => {
+                        this.vocabContext.setState({alertOKOpened: true});
                         console.log("lastVocabUpdateDate in IndexedDB updated successfully")
                     }
 
                     lastVocabUpdateDateRequest.onerror = () => {
+                        this.vocabContext.setState({alertErrorOpened: true});
                         console.log("lastVocabUpdateDate in IndexedDB updated successfully")
                     }
                 }
 
                 vocabListRequest.onerror = (err) => {
+                    this.vocabContext.setState({alertErrorOpened: true});
                     console.log("Error occurs when VocabList in IndexedDB updated ")
 
                 }
@@ -188,6 +196,7 @@ export default class VocabAPI {
         request.onerror = err => {
             console.log("Error occurs when retriving lastvocabupdatedate")
             console.log(err)
+            this.vocabContext.setState({alertErrorOpened: true});
         }
 
     }

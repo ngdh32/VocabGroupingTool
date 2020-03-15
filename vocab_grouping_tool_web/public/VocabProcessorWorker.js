@@ -38,6 +38,7 @@ const ProcessRequestQueue = () => {
                         console.log("Request is done sccessfully");
                     }).catch(error => {
                         console.log("Request is done unsccessfully");
+                        postMessage(new ResponseQueueObject("ERROR", null))
                     }).finally(() => {
                         console.log("ProcessRequestQueue Finally called")
                         let deleteTransaction = _db.transaction([QueueStore_Name], "readwrite");

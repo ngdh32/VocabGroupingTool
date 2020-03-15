@@ -67,3 +67,11 @@
 .dropdown .dropdown-toggle{
   font-weight: bold !important;
 }
+
+.divAlert{
+  position: fixed;
+  left: 10%;
+  width: 80%;
+  bottom: 10%;
+  margin: 0 auto !important;
+}
