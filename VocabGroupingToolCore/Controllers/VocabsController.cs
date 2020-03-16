@@ -54,12 +54,11 @@ namespace VocabGroupingToolCore.Controllers
                 //result.Data = VocabViewObject.CreateVocabViewObjectList(dbContext.Vocabs.Where(x => x.UserId == userId).ToList(), null);
                 if (!string.IsNullOrEmpty(lastVocabUpdateDate))
                 {
-                    DateTime lastVocabUpdateDateInput = Convert.ToDateTime(lastVocabUpdateDate);
-                    if (lastVocabUpdateDateInput == user.lastVocabUpdateDate)
+                    if (lastVocabUpdateDate == user.lastVocabUpdateDate)
                     {
                         result.Data = new VocabViewObjectWithTime()
                         {
-                            vocabs = null,
+                            vocabs = null ,
                             lastVocabUpdateDate = user.lastVocabUpdateDate
                         };
                     }
@@ -124,7 +123,7 @@ namespace VocabGroupingToolCore.Controllers
             if (result == 1)
             {
                 var user = await userManager.FindByIdAsync(nameIdentifier.Value);
-                user.lastVocabUpdateDate = DateTime.UtcNow;
+                user.lastVocabUpdateDate = ConvertToTimestamp(DateTime.UtcNow);
                 await userManager.UpdateAsync(user);
 
                 return new ResultModel()
@@ -163,7 +162,7 @@ namespace VocabGroupingToolCore.Controllers
                 };
             };
             var user = await userManager.FindByIdAsync(nameIdentifier.Value);
-            user.lastVocabUpdateDate = DateTime.UtcNow;
+            user.lastVocabUpdateDate = ConvertToTimestamp(DateTime.UtcNow);
             await userManager.UpdateAsync(user);
 
             Vocab foundVocab = dbContext.Vocabs.Where(x => x.Id == vocab.Id).FirstOrDefault();
@@ -220,7 +219,7 @@ namespace VocabGroupingToolCore.Controllers
                 };
             };
             var user = await userManager.FindByIdAsync(nameIdentifier.Value);
-            user.lastVocabUpdateDate = DateTime.UtcNow;
+            user.lastVocabUpdateDate = ConvertToTimestamp(DateTime.UtcNow);
             await userManager.UpdateAsync(user);
 
 
@@ -258,5 +257,10 @@ namespace VocabGroupingToolCore.Controllers
                 }
             }
         }
+
+        private string ConvertToTimestamp(DateTime dateTime){
+            return ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+        }
+
     }
 }

@@ -104,7 +104,7 @@ const VocabAPI = {
             let request = objectStore.get(config.VocabsStore_lastVocabModifiedDate_Id);
 
             request.onsuccess = event => {
-                let lastVocabUpdateDate = request.result == undefined ? "" : request.result.data; // if the timestamp cannot be retrieved, send empty string instead
+                let lastVocabUpdateDate = request.result == undefined || request.result.data == undefined ? "" : request.result.data; // if the timestamp cannot be retrieved, send empty string instead
                 callApi("/api/vocabs/" + lastVocabUpdateDate, requestConfigObject
                     , (res) => {
                         // send the result back to main thread

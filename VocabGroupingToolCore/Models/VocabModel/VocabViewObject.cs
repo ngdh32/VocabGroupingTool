@@ -10,7 +10,7 @@ namespace VocabGroupingToolCore.Models.VocabModel
     public class VocabViewObjectWithTime
     {
         public List<VocabViewObject> vocabs { get; set; }
-        public DateTime? lastVocabUpdateDate { get; set; }
+        public string lastVocabUpdateDate { get; set; }
     }
 
     public class VocabViewObject : Vocab

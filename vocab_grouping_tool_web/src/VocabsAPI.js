@@ -97,8 +97,8 @@ export default class VocabAPI {
             // get vocabs list from indexedDB
             _this.GetVocabListFromIndexedDB().then((res) => {
                 // check if there is a vocab list in indexedDB
-                if (res != undefined) {
-                    // only load vocablist if entry can be returned
+                if (res != undefined && res.data != undefined) {
+                    // only load vocablist from indexed DB if entry can be returned
                     const vocabs = res.data;
                     _this.vocabContext.setState({ vocabs: vocabs, displayVocabs: vocabs, searchKey: "" });
                     _this.vocabContext.setState({
@@ -146,12 +146,14 @@ export default class VocabAPI {
 
         request.onsuccess = event => {
             // check if the date can be retrived or not
-            let lastVocabUpdateDate = request.result == undefined ? null : request.result.data;
-            alert("Have problenm with res.data when the application is firstly launched for the first time")
+            let lastVocabUpdateDate = request.result == undefined || request.result.data == undefined ? null : request.result.data;
             // check if the last updated vocab date in indexedDB is equal to the one from server
             if (res.data.lastVocabUpdateDate == lastVocabUpdateDate) {
                 console.log("Vocablist are synced with Server");
                 this.vocabContext.setState({alertOKOpened: true});
+                _this.vocabContext.setState({
+                    isVocabLoading: false
+                })
             } else {
                 console.log("VocabList is updated in Server. Syncing with the server")
                 // update the ui with the latest vocablist
@@ -189,8 +191,8 @@ export default class VocabAPI {
                     console.log("Error occurs when VocabList in IndexedDB updated ")
 
                 }
-
             }
+
         }
 
         request.onerror = err => {

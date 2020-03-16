@@ -16,6 +16,6 @@ namespace VocabGroupingToolCore.Models
 
     public class ApplicationUser : IdentityUser
     {
-        public DateTime? lastVocabUpdateDate { get; set; }
+        public string lastVocabUpdateDate { get; set; }
     }
 }

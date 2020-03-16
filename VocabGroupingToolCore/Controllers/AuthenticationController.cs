@@ -120,7 +120,8 @@ namespace VocabGroupingToolCore.Controllers
                     //Id = Guid.NewGuid().ToString(),
                     UserName = loginView.name,
                     Email = loginView.name,
-                    SecurityStamp = Guid.NewGuid().ToString() // need to add this !!!
+                    SecurityStamp = Guid.NewGuid().ToString(), // need to add this !!!
+                    lastVocabUpdateDate = ""
                 };
                 var result = userManager.CreateAsync(user, loginView.password).Result;
 
