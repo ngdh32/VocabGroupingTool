@@ -215,7 +215,14 @@ export default class Home extends React.Component {
 
     handleSearchInputChange = (event) => {
         let searchKey = event.target.value;
-        this.setState({searchKey: searchKey});
+        this.setState({searchKey: searchKey}, () => {
+            this.handleSearchInput();
+        });
+    }
+
+    handleSearchInput = () => {
+        const searchKey = this.state.searchKey;
+        console.log("searchkey:" + searchKey)
         if (searchKey == ""){
             this.setState({displayVocabs: this.state.vocabs});
         }else{

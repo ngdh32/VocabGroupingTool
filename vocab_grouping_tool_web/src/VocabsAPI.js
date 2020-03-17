@@ -100,10 +100,8 @@ export default class VocabAPI {
                 if (res != undefined && res.data != undefined) {
                     // only load vocablist from indexed DB if entry can be returned
                     const vocabs = res.data;
-                    _this.vocabContext.setState({ vocabs: vocabs, displayVocabs: vocabs, searchKey: "" });
-                    _this.vocabContext.setState({
-                        isVocabLoading: false
-                    })
+                    _this.vocabContext.setState({ vocabs: vocabs, isVocabLoading: false });
+                    _this.vocabContext.handleSearchInput();
                 }
             }).then(() => {
                 _this.vocabQueueWorker.postMessage(getRequest);
@@ -154,15 +152,17 @@ export default class VocabAPI {
                 _this.vocabContext.setState({
                     isVocabLoading: false
                 })
+                _this.vocabContext.handleSearchInput();
             } else {
                 console.log("VocabList is updated in Server. Syncing with the server")
                 // update the ui with the latest vocablist
                 _this.vocabContext.setState({
                     vocabs: res.data.vocabs,
-                    displayVocabs: res.data.vocabs,
-                    searchKey: "",
+                    // displayVocabs: res.data.vocabs,
+                    // searchKey: "",
                     isVocabLoading: false
-                })
+                }, () => {_this.vocabContext.handleSearchInput()}) // update the display vocab list based on the search key
+                
                 // need to update the vocab list before the last vocab modified date
                 const vocabList = {};
                 vocabList[config.VGT_VGT_Info_ObjectStore_Id] = config.VocabsStore_Vocabs_Id;
