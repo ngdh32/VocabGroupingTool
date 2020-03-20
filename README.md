@@ -12,12 +12,18 @@ Demo site: https://vgt.azurewebsites.net/ (Kindly wait a minute as I use free ti
 
 If you are visiting VGT demo site on IOS, once you log in you can save it to the desktop so that you can use it with a native -app like outlook.
 
+## Starting from version 2.0.0, VGT is offline access available (read-only)!!!
+Please see the demo footage in https://imgur.com/LFD9VKs 
+
+With this feature, after loading the VGT for once, the application can be loaded instantly without waiting for the backend service to be ready.
+
 ## Prerequisites
 
 The following need to be installed before launching the application:
 - net core 2.2
 - node v10.15.1
 - database(in my case MySQL)
+
 
 ## Installations
 
@@ -48,6 +54,9 @@ npm start
 Front End:
 - reactjs 
 - bootstrap
+- service worker
+- web worker
+- indexedDB
 
 Back End:
 - .Net core 2.2 Web API
