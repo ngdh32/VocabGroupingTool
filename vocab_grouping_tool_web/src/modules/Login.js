@@ -26,6 +26,8 @@ class Login extends React.Component {
     this.handleRegisterClickEvent = this.handleRegisterClickEvent.bind(this);
     this.toggleIsLoading = this.toggleIsLoading.bind(this);
 
+    // send a http get request to api service to start up the API service 
+    fetch(config.vgt_core_url);
   }
 
   handleChangeEvent(event) {
@@ -80,6 +82,19 @@ class Login extends React.Component {
   }
 
   handleRegisterClickEvent() {
+    // add empty username & password validation
+    if (this.state.name == undefined ||
+        this.state.name.trim() == "" || 
+        this.state.password == undefined ||
+        this.state.password == "")
+    {
+      this.setState({
+        errorMsg: "To register, you need to provide the username and password first"
+      })
+      return;
+    }
+
+
     this.setState({
       errorMsg: ""
     })
