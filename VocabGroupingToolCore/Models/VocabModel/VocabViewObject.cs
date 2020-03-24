@@ -49,6 +49,9 @@ namespace VocabGroupingToolCore.Models.VocabModel
                 result.Add(vocabViewObject);
             }
 
+            // sorting the vocablist according to the first letter of the word
+            result = result.OrderBy(x => x.Word.ToLower()).ToList();
+
             return result;
         }
 

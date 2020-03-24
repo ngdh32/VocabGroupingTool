@@ -92,7 +92,9 @@ export default class VocabAPI {
 
         
         if (isFromServerOnly){
-            _this.vocabQueueWorker.postMessage(getRequest);
+            _this.vocabContext.setState({ searchKey: "" }, () => {
+                _this.vocabQueueWorker.postMessage(getRequest);
+            });
         }else {
             // get vocabs list from indexedDB
             _this.GetVocabListFromIndexedDB().then((res) => {
@@ -256,6 +258,7 @@ export default class VocabAPI {
             _this.getVocabIndexedDBReady().then(() => {
                 // terminate the VocabQueueWorker
                 _this.vocabQueueWorker.terminate();
+                _this.vocabProcessWorker.terminate();
                 let transaction = _this._db.transaction([config.VGT_VGT_Info_ObjectStore, config.VGT_Queue_ObjectStore], "readwrite");
                 let VocabObjectStore = transaction.objectStore(config.VGT_VGT_Info_ObjectStore);
                 // clear all the indexedDB data
